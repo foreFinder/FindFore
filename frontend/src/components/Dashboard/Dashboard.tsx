@@ -2,6 +2,17 @@ import { useCallback, useEffect, useState } from 'react';
 import { SegmentedControl, SimpleGrid, Group } from '@mantine/core';
 import PlayerList from '../PlayerList/PlayerList';
 import TeeTimeContainer from '../TeeTimeContainer/TeeTimeContainer';
+import type { Event, Friend, Player, HandleFriends, HandleInviteAction } from '../../types';
+
+interface DashboardProps {
+  events: Event[];
+  currentUserId: number;
+  screenWidth: number;
+  handleInviteAction: HandleInviteAction;
+  friends: Friend[];
+  players: Player[];
+  handleFriends: HandleFriends;
+}
 
 const Dashboard = ({
   events,
@@ -11,9 +22,9 @@ const Dashboard = ({
   friends,
   players,
   handleFriends,
-}) => {
-  const [availableTeeTimes, setAvailableTeeTimes] = useState([]);
-  const [committedTeeTimes, setCommittedTeeTimes] = useState([]);
+}: DashboardProps) => {
+  const [availableTeeTimes, setAvailableTeeTimes] = useState<Event[]>([]);
+  const [committedTeeTimes, setCommittedTeeTimes] = useState<Event[]>([]);
   const [teeTimeType, setTeeTimeType] = useState('committed');
 
   const getAvailable = useCallback(() => {

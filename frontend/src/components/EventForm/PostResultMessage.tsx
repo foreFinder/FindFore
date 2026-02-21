@@ -1,11 +1,16 @@
 import { Link } from 'react-router-dom';
 import { Modal, Text, Anchor } from '@mantine/core';
 
-function PostResultMessage({ postError, refreshEvents }) {
+interface PostResultMessageProps {
+  postError: boolean;
+  refreshEvents: () => void;
+}
+
+function PostResultMessage({ postError, refreshEvents }: PostResultMessageProps) {
   return (
     <Modal
       opened
-      onClose={!postError ? refreshEvents : undefined}
+      onClose={!postError ? refreshEvents : () => {}}
       centered
       withCloseButton={false}
       overlayProps={{ backgroundOpacity: 0.3 }}

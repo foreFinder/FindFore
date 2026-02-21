@@ -4,20 +4,28 @@ import { Link } from 'react-router-dom';
 
 import TeeTime from '../TeeTime/TeeTime';
 import InviteTypeSelect from './InviteTypeSelect/InviteTypeSelect';
+import type { Event, HandleInviteAction } from '../../types';
+
+interface TeeTimeContainerProps {
+  title: string;
+  events: Event[];
+  windowWidth: number;
+  handleInviteAction: HandleInviteAction;
+}
 
 const TeeTimeContainer = ({
   title,
   events,
   windowWidth,
   handleInviteAction,
-}) => {
-  const [publicInvites, setPublicInvites] = useState([]);
-  const [privateInvites, setPrivateInvites] = useState([]);
-  const [committedTeeTimes, setCommittedTeeTimes] = useState([]);
+}: TeeTimeContainerProps) => {
+  const [publicInvites, setPublicInvites] = useState<Event[]>([]);
+  const [privateInvites, setPrivateInvites] = useState<Event[]>([]);
+  const [committedTeeTimes, setCommittedTeeTimes] = useState<Event[]>([]);
   const [invitesToDisplay, setInvitesToDisplay] = useState(
     title === 'Committed Tee Times' ? '' : 'private'
   );
-  const getEventType = useRef(() => {});
+  const getEventType = useRef<() => string | undefined>(() => undefined);
 
   getEventType.current = useCallback(() => {
     if (title === 'Committed Tee Times') {
@@ -43,7 +51,7 @@ const TeeTimeContainer = ({
     );
   };
 
-  const getTeeTimes = (eventsType) => {
+  const getTeeTimes = (eventsType: Event[]) => {
     return eventsType.map((event) => {
       return (
         <TeeTime

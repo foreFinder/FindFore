@@ -33,11 +33,14 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.5.2",
     "cypress": "^15.10.0",
     "postcss": "^8.5.3",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
+    "typescript": "^5.9.3",
     "vite": "^6.3.5",
     "vite-plugin-pwa": "^1.0.0"
   }

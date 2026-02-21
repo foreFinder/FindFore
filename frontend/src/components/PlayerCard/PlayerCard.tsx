@@ -1,7 +1,13 @@
-import React from 'react';
 import { Group, Text, Button } from '@mantine/core';
+import type { Friend, Player, HandleFriends } from '../../types';
 
-const PlayerCard = ({ playerInfo, friends, handleFriends }) => {
+interface PlayerCardProps {
+  playerInfo: Friend | Player;
+  friends: Friend[];
+  handleFriends: HandleFriends;
+}
+
+const PlayerCard = ({ playerInfo, friends, handleFriends }: PlayerCardProps) => {
   const isFriend = friends.some((f) => f.name === playerInfo.name);
 
   return (
@@ -15,8 +21,8 @@ const PlayerCard = ({ playerInfo, friends, handleFriends }) => {
           size='xs'
           onClick={() =>
             isFriend
-              ? handleFriends.remove(playerInfo)
-              : handleFriends.add(playerInfo)
+              ? handleFriends.remove(playerInfo as Friend)
+              : handleFriends.add(playerInfo as Friend)
           }
         >
           {isFriend ? 'Remove Friend' : 'Add Friend'}

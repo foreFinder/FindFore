@@ -1,6 +1,17 @@
 // GOLF COURSE DATA
 
-export const courses = [
+interface SampleCourse {
+  id: number;
+  name: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  phone: string;
+  cost: number;
+}
+
+export const courses: SampleCourse[] = [
   {
     id: 100,
     name: 'Green Valley Ranch Golf Club',
@@ -41,17 +52,24 @@ export const courses = [
     phone: '720.865.0700',
     cost: 58
   }
-]
+];
 
 
 // PLAYER DATA
 
-export const players = [
+interface SamplePlayer {
+  id: number;
+  name: string;
+  friends: number[];
+  committedTimes: number[];
+}
+
+export const players: SamplePlayer[] = [
   {
     id: 1,
     name: 'Eric Rabun',
     friends: [2, 3, 5],
-    committedTimes: [/*list of tee time event id's*/],
+    committedTimes: [],
   },
   {
     id: 2,
@@ -83,12 +101,32 @@ export const players = [
     friends: [1, 2, 3, 4, 5],
     committedTimes: [],
   }
-]
+];
 
 
 // EVENTS DATA
 
-export const teeTimes = {
+interface SampleEventAttributes {
+  course_name: string;
+  date: string;
+  tee_time: string;
+  open_spots: number;
+  number_of_holes: string;
+  private: boolean;
+  host_name: string;
+  accepted: number[];
+  declined: number[];
+  pending: number[];
+  remaining_spots: number;
+}
+
+interface SampleEvent {
+  id: number;
+  type: string;
+  attributes: SampleEventAttributes;
+}
+
+export const teeTimes: { data: SampleEvent[] } = {
   "data": [
     {
       "id": 1,
@@ -102,7 +140,7 @@ export const teeTimes = {
         "private": true,
         "host_name": "Bob",
         "accepted": [2, 3],
-        "declined": [], 
+        "declined": [],
         "pending": [1],
         "remaining_spots": 1
       }
@@ -119,7 +157,7 @@ export const teeTimes = {
         "private": true,
         "host_name": "Amy Jones",
         "accepted": [2, 3],
-        "declined": [], 
+        "declined": [],
         "pending": [1],
         "remaining_spots": 1
       }
@@ -136,10 +174,10 @@ export const teeTimes = {
         "private": false,
         "host_name": "Jim Bob",
         "accepted": [2],
-        "declined": [], 
+        "declined": [],
         "pending": [],
         "remaining_spots": 1
       }
     }
   ]
-}
+};

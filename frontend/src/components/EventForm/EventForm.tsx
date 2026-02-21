@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { postEvent } from '../../APICalls/APICalls';
 import PostResultMessage from './PostResultMessage';
 import {
@@ -11,27 +11,34 @@ import {
   Checkbox,
   Group,
   Text,
-  TextInput,
   SimpleGrid,
 } from '@mantine/core';
 import { DateInput, TimeInput } from '@mantine/dates';
 import dayjs from 'dayjs';
+import type { Course, Friend } from '../../types';
 
-function EventForm({ courses, friends, hostId, refreshEvents }) {
+interface EventFormProps {
+  courses: Course[];
+  friends: Friend[];
+  hostId: number;
+  refreshEvents: () => void;
+}
+
+function EventForm({ courses, friends, hostId, refreshEvents }: EventFormProps) {
   const tomorrow = dayjs().add(1, 'day').toDate();
 
-  const [date, setDate] = useState(tomorrow);
+  const [date, setDate] = useState<Date | null>(tomorrow);
   const [teeTime, setTeeTime] = useState('');
-  const [openSpots, setOpenSpots] = useState('2');
-  const [selectedFriends, setSelectedFriends] = useState([]);
+  const [openSpots, setOpenSpots] = useState<string | null>('2');
+  const [selectedFriends, setSelectedFriends] = useState<number[]>([]);
   const [numHoles, setNumHoles] = useState('18');
-  const [golfCourse, setGolfCourse] = useState('');
+  const [golfCourse, setGolfCourse] = useState<string | null>('');
   const [isPrivate, setIsPrivate] = useState(false);
   const [allFriends, setAllFriends] = useState(false);
   const [postError, setPostError] = useState(false);
   const [postAttempt, setPostAttempt] = useState(false);
 
-  const addFriendToInvite = (friendId, checked) => {
+  const addFriendToInvite = (friendId: number, checked: boolean) => {
     if (checked) {
       setSelectedFriends([...selectedFriends, friendId]);
     } else {
@@ -39,7 +46,7 @@ function EventForm({ courses, friends, hostId, refreshEvents }) {
     }
   };
 
-  const inviteAllFriends = (checked) => {
+  const inviteAllFriends = (checked: boolean) => {
     const friendIds = friends.map((f) => f.id);
     if (checked) {
       setSelectedFriends([...friendIds]);
@@ -58,17 +65,17 @@ function EventForm({ courses, friends, hostId, refreshEvents }) {
         golfCourse,
         formattedDate,
         teeTime,
-        openSpots,
+        openSpots || '2',
         numHoles,
         isPrivate,
         hostId,
         selectedFriends
-      ).catch(() => setPostError(true));
+      )?.catch(() => setPostError(true));
     }
   };
 
   const teeTimeHour = teeTime ? parseInt(teeTime.split(':')[0]) : null;
-  const isValidTime = teeTime && teeTimeHour >= 7 && teeTimeHour <= 17;
+  const isValidTime = teeTime && teeTimeHour !== null && teeTimeHour >= 7 && teeTimeHour <= 17;
 
   return (
     <>

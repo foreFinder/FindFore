@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
-import { SegmentedControl, Stack, Text } from '@mantine/core';
+import { useState } from 'react';
+import { SegmentedControl, Text } from '@mantine/core';
 import PlayerCard from '../PlayerCard/PlayerCard';
+import type { Friend, Player, HandleFriends } from '../../types';
 
-const PlayerList = ({ screenWidth, players, friends, handleFriends, userId }) => {
+interface PlayerListProps {
+  screenWidth: number;
+  players: Player[];
+  friends: Friend[];
+  handleFriends: HandleFriends;
+  userId: number;
+}
+
+const PlayerList = ({ screenWidth, players, friends, handleFriends, userId }: PlayerListProps) => {
   const [playerType, setPlayerType] = useState('friends');
 
-  const mapPlayers = (type) => {
+  const mapPlayers = (type: (Friend | Player)[]) => {
     return type
-      .filter((t) => parseInt(t.id) !== userId)
+      .filter((t) => parseInt(String(t.id)) !== userId)
       .map((p) => (
         <PlayerCard
           key={p.id}

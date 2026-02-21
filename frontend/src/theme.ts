@@ -1,6 +1,6 @@
-import { createTheme } from '@mantine/core';
+import { createTheme, MantineThemeOverride } from '@mantine/core';
 
-const theme = createTheme({
+const theme: MantineThemeOverride = createTheme({
   primaryColor: 'green',
   colors: {
     green: [

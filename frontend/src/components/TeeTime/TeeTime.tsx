@@ -1,16 +1,23 @@
 import dayjs from 'dayjs';
 import { Card, Grid, Text, Button, Group } from '@mantine/core';
+import type { Event, HandleInviteAction } from '../../types';
 
-const TeeTime = ({ type, event, handleInviteAction }) => {
-  const formatTime = (time) => {
-    let hours = time.split(':')[0];
+interface TeeTimeProps {
+  type: string | undefined;
+  event: Event;
+  handleInviteAction: HandleInviteAction;
+}
+
+const TeeTime = ({ type, event, handleInviteAction }: TeeTimeProps) => {
+  const formatTime = (time: string) => {
+    let hours: string | number = time.split(':')[0];
     const minutes = time.split(':')[1];
     const period = parseInt(hours) > 11 ? 'PM' : 'AM';
 
-    if (hours < 10) {
+    if (parseInt(hours) < 10) {
       hours = hours.slice(1, 2);
-    } else if (hours > 12) {
-      hours = hours - 12;
+    } else if (parseInt(hours) > 12) {
+      hours = parseInt(hours) - 12;
     }
 
     return `${hours}:${minutes} ${period}`;

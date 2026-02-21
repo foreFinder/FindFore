@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { SegmentedControl } from '@mantine/core';
 
-const TypeSelector = ({ handleClick }) => {
+interface TypeSelectorProps {
+  handleClick: (value: string) => void;
+}
+
+const TypeSelector = ({ handleClick }: TypeSelectorProps) => {
   const [value, setValue] = useState('private');
 
   return (

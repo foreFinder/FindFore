@@ -7,6 +7,11 @@
 // existing tabs open on the page have been closed, since previously cached
 // resources are updated in the background.
 
+interface SWConfig {
+  onSuccess?: (registration: ServiceWorkerRegistration) => void;
+  onUpdate?: (registration: ServiceWorkerRegistration) => void;
+}
+
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
     // [::1] is the IPv6 localhost address.
@@ -15,7 +20,7 @@ const isLocalhost = Boolean(
     window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
 );
 
-export function register(config) {
+export function register(config?: SWConfig): void {
   if (import.meta.env.PROD && 'serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(import.meta.env.BASE_URL, window.location.href);
@@ -48,7 +53,7 @@ export function register(config) {
   }
 }
 
-function registerValidSW(swUrl, config) {
+function registerValidSW(swUrl: string, config?: SWConfig): void {
   navigator.serviceWorker
     .register(swUrl)
     .then((registration) => {
@@ -86,7 +91,7 @@ function registerValidSW(swUrl, config) {
     });
 }
 
-function checkValidServiceWorker(swUrl, config) {
+function checkValidServiceWorker(swUrl: string, config?: SWConfig): void {
   fetch(swUrl, {
     headers: { 'Service-Worker': 'script' },
   })
@@ -110,13 +115,13 @@ function checkValidServiceWorker(swUrl, config) {
     });
 }
 
-export function unregister() {
+export function unregister(): void {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready
       .then((registration) => {
         registration.unregister();
       })
-      .catch((error) => {
+      .catch((error: Error) => {
         console.error(error.message);
       });
   }

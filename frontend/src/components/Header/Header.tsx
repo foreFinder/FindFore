@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Burger, Anchor, Group, Stack } from '@mantine/core';
 import { GiGolfTee } from 'react-icons/gi';
 
-const Header = ({ screenWidth }) => {
+interface HeaderProps {
+  screenWidth: number;
+}
+
+const Header = ({ screenWidth }: HeaderProps) => {
   const [mobileNav, setMobileNav] = useState(false);
   const [selected, setSelected] = useState('');
 

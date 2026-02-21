@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Paper, TextInput, PasswordInput, Button, Title, Stack, Group } from '@mantine/core';
 
-function Login({ validateLogin }) {
+interface LoginProps {
+  validateLogin: (email: string, password: string) => void;
+}
+
+function Login({ validateLogin }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
