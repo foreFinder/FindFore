@@ -17,6 +17,7 @@ Player.create!(id: 3, name: 'Amber', phone: "9999991236", email: "test3@test.com
 Player.create!(id: 4, name: 'Betty', phone: "9999991237", email: "test4@test.com", username: "username4", password: "password")
 Player.create!(id: 5, name: 'Burt', phone: "9999991238" , email: "test5@test.com", username: "username5", password: "password")
 Player.create!(id: 6, name: "Cleo", phone: "9999991239" , email: "test6@test.com", username: "username6", password: "password")
+Player.create!(id: 7, name: 'Eric Rabun', phone: "9999991240", email: "errabun@gmail.com", username: "errabun", password: "password")
 
 Course.create!(id: 1, name: 'Green Valley Ranch Golf Club', street: '4900 Himalaya Road', city: 'Denver', state: 'Colorado', zip_code: '80249', phone: '303.371.3131', cost: 80)
 Course.create!(id: 2, name: 'City Park Golf Course', street: '3181 E. 23rd Avenue', city: 'Denver', state: 'Colorado', zip_code: '80205', phone: '720.865.3410', cost: 65)
