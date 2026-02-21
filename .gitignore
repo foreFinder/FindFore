@@ -1,0 +1,27 @@
+# OS
+.DS_Store
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Backend
+backend/.bundle
+backend/log/*
+!backend/log/.keep
+backend/tmp/*
+!backend/tmp/.keep
+backend/storage/*
+!backend/storage/.keep
+backend/config/master.key
+backend/config/application.yml
+backend/coverage
+backend/twilio.env
+
+# Frontend
+frontend/node_modules
+frontend/coverage
+frontend/build
+frontend/dist
+frontend/npm-debug.log*

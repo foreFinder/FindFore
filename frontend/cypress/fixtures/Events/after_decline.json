@@ -1,0 +1,80 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "type": "event",
+      "attributes": {
+        "course_name": "Green Valley Ranch Golf Club",
+        "date": "08-17-2021",
+        "tee_time": "11:30",
+        "open_spots": 3,
+        "number_of_holes": "9",
+        "private": true,
+        "host_name": "Amy",
+        "host_id": 1,
+        "accepted": [1],
+        "declined": [], 
+        "pending": [2, 3],
+        "closed": [],
+        "remaining_spots": 2
+      }
+    },
+    {
+      "id": 2,
+      "type": "event",
+      "attributes": {
+        "course_name": "City Park Golf Course",
+        "date": "08-18-2021",
+        "tee_time": "12:30",
+        "open_spots": 3,
+        "number_of_holes": "18",
+        "private": true,
+        "host_name": "Andrew",
+        "host_id": 2,
+        "accepted": [2, 3],
+        "declined": [1], 
+        "pending": [],
+        "closed": [],
+        "remaining_spots": 1
+      }
+    },
+    {
+      "id": 3,
+      "type": "event",
+      "attributes": {
+        "course_name": "Riverdale Golf Club",
+        "date": "08-19-2021",
+        "tee_time": "13:30",
+        "open_spots": 4,
+        "number_of_holes": "9",
+        "private": false,
+        "host_name": "Andrew",
+        "host_id": 2,
+        "accepted": [2],
+        "declined": [], 
+        "pending": [],
+        "closed": [],
+        "remaining_spots": 2
+      }
+    },
+    {
+      "id": 4,
+      "type": "event",
+      "attributes": {
+        "course_name": "City Park Golf Course",
+        "date": "08-19-2021",
+        "tee_time": "13:30",
+        "open_spots": 3,
+        "number_of_holes": "9",
+        "private": false,
+        "host_name": "Andrew",
+        "host_id": 3,
+        "accepted": [3, 1],
+        "declined": [], 
+        "pending": [2],
+        "closed": [],
+        "remaining_spots": 1
+      }
+    }
+  ]
+}

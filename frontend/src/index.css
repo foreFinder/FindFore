@@ -1,0 +1,14 @@
+html {
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  height: 100%;
+}
+
+#root {
+  display: grid;
+  grid-template-rows: 80px auto;
+  height: 100%;
+}

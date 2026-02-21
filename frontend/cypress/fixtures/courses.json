@@ -1,0 +1,43 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "type": "course",
+      "attributes": {
+        "name": "Green Valley Ranch Golf Club",
+        "street": "4900 Himalaya Road",
+        "city": "Denver",
+        "state": "Colorado",
+        "zip_code": "80249",
+        "phone": "303.371.3131",
+        "cost": "80"
+      }
+    },
+    {
+      "id": "2",
+      "type": "course",
+      "attributes": {
+        "name": "City Park Golf Course",
+        "street": "3181 E. 23rd Avenue",
+        "city": "Denver",
+        "state": "Colorado",
+        "zip_code": "80205",
+        "phone": "720.865.3410",
+        "cost": "65"
+      }
+    },
+    {
+      "id": "3",
+      "type": "course",
+      "attributes": {
+        "name": "Riverdale Golf Club",
+        "street": "13300 Riverdale Road",
+        "city": "Brighton",
+        "state": "Colorado",
+        "zip_code": "80602",
+        "phone": "303.659.4700",
+        "cost": "74"
+      }
+    }
+  ]
+} 

@@ -1,0 +1,40 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "type": "players",
+      "attributes": {
+        "name": "Amy",
+        "friends": [2, 3],
+        "events": []
+      }
+    },
+    {
+      "id": "2",
+      "type": "players",
+      "attributes": {
+        "name": "Andrew",
+        "friends": [1, 3],
+        "events": []
+      }
+    },
+    {
+      "id": "3",
+      "type": "players",
+      "attributes": {
+        "name": "Amber",
+        "friends": [1, 2],
+        "events": [1, 2]
+      }
+    },
+    {
+      "id": "4",
+      "type": "players",
+      "attributes": {
+        "name": "Betty",
+        "friends": [2, 3],
+        "events": [3]
+      }
+    }
+  ]
+}
