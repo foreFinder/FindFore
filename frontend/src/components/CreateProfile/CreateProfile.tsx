@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { createNewProfile } from '../../APICalls/APICalls';
 import { Paper, TextInput, PasswordInput, Button, Title, Stack, Text, Center, Divider, Box } from '@mantine/core';
 import { GiGolfTee } from 'react-icons/gi';
+import { useNavigate } from 'react-router-dom';
 
 function CreateProfile() {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
@@ -14,7 +16,7 @@ function CreateProfile() {
   const submitProfile = () => {
     if (confirmSamePW()) {
       createNewProfile(name, phone, email, userName, password, passwordConfirm)
-        .then((resp) => console.log(resp));
+        .then(() => navigate('/login', { replace: true }));
     } else {
       alert('Passwords do not match, please try again!');
     }

@@ -30,6 +30,7 @@ function App() {
   const [hostPlayer, setHostPlayer] = useState<number>(0);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
+  const [loginError, setLoginError] = useState<string>('');
 
   const addFriend = (friend: Friend) => {
     postFriendship(hostPlayer, friend.id).then((data) => {
@@ -60,14 +61,21 @@ function App() {
   };
 
   const validateLogin = (email: string, password: string) => {
+    setLoginError('');
     validateStandardLogin(email, password)
       .then(data => {
-        if (!data) return;
+        if (!data) {
+          setLoginError('Invalid email or password. Please try again.');
+          return;
+        }
         setHostPlayer(data.id);
         if (data.token) {
           localStorage.setItem('jwt_token', data.token);
         }
         // Friends will be populated from allPlayers once hostPlayer is set
+      })
+      .catch(() => {
+        setLoginError('Unable to sign in right now. Please try again.');
       });
   };
 
@@ -127,7 +135,17 @@ function App() {
       <Routes>
         <Route
           path='/login'
-          element={<Login validateLogin={validateLogin} />}
+          element={
+            hostPlayer ? (
+              <Navigate to='/dashboard' replace />
+            ) : (
+              <Login
+                validateLogin={validateLogin}
+                loginError={loginError}
+                clearLoginError={() => setLoginError('')}
+              />
+            )
+          }
         />
         <Route
           path='/create-profile'

@@ -5,9 +5,11 @@ import { GiGolfTee } from 'react-icons/gi';
 
 interface LoginProps {
   validateLogin: (email: string, password: string) => void;
+  loginError?: string;
+  clearLoginError?: () => void;
 }
 
-function Login({ validateLogin }: LoginProps) {
+function Login({ validateLogin, loginError, clearLoginError }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -28,13 +30,23 @@ function Login({ validateLogin }: LoginProps) {
           </Stack>
 
           <Stack gap='md'>
+            {loginError && (
+              <Text c='red.6' size='sm' ta='center'>
+                {loginError}
+              </Text>
+            )}
             <TextInput
               label='Email'
               type='email'
               id='email'
               name='email'
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                if (loginError) {
+                  clearLoginError?.();
+                }
+                setEmail(e.target.value);
+              }}
               required
             />
             <PasswordInput
@@ -42,7 +54,12 @@ function Login({ validateLogin }: LoginProps) {
               id='password'
               name='password'
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                if (loginError) {
+                  clearLoginError?.();
+                }
+                setPassword(e.target.value);
+              }}
               required
             />
             <Button
