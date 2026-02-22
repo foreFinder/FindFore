@@ -96,7 +96,7 @@ function EventForm({ courses, friends, hostId, refreshEvents }: EventFormProps) 
                 onChange={setGolfCourse}
                 data={courses.map((course) => ({
                   value: String(course.id),
-                  label: course.attributes.name,
+                  label: course.name,
                 }))}
                 required
               />

@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS player_events;
+DROP TABLE IF EXISTS friendships;
+DROP TABLE IF EXISTS events;
+DROP TABLE IF EXISTS courses;
+DROP TABLE IF EXISTS players;

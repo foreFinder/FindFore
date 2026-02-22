@@ -1,3 +1,5 @@
+import type { Player, Course, Event, LoginResponse } from '../types';
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 
 const endpoints = {
@@ -9,15 +11,16 @@ const endpoints = {
   sessions: `${API_BASE}/api/v1/sessions`,
 };
 
-interface ApiResponse {
-  data: Record<string, unknown>;
+function authHeaders(): Record<string, string> {
+  const token = localStorage.getItem('jwt_token');
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
 }
 
-interface ApiListResponse {
-  data: Record<string, unknown>[];
-}
-
-export const getAllPlayers = (): Promise<ApiListResponse> => {
+export const getAllPlayers = (): Promise<Player[]> => {
   return fetch(endpoints.players)
     .then(resp => {
       if (!resp.ok) {
@@ -28,7 +31,7 @@ export const getAllPlayers = (): Promise<ApiListResponse> => {
     });
 };
 
-export const getAllCourses = (): Promise<ApiListResponse> => {
+export const getAllCourses = (): Promise<Course[]> => {
   return fetch(endpoints.courses)
     .then(resp => {
       if (!resp.ok) {
@@ -39,7 +42,7 @@ export const getAllCourses = (): Promise<ApiListResponse> => {
     });
 };
 
-export const getAllEvents = (playerId: number): Promise<ApiListResponse> => {
+export const getAllEvents = (playerId: number): Promise<Event[]> => {
   return fetch(`${endpoints.players}/${playerId}/events`)
     .then(resp => {
       if (!resp.ok) {
@@ -59,7 +62,7 @@ export const postEvent = (
   isPrivate: boolean,
   hostId: number,
   selectedFriends: number[]
-): Promise<ApiResponse> | undefined => {
+): Promise<Event> | undefined => {
   if (!courseId || !teeTime) {
     return;
   }
@@ -75,7 +78,7 @@ export const postEvent = (
       host_id: hostId,
       invitees: selectedFriends,
     }),
-    headers: { 'Content-Type': 'application/json' }
+    headers: authHeaders()
   })
   .then(resp => {
     if (resp.ok) {
@@ -86,7 +89,7 @@ export const postEvent = (
   });
 };
 
-export const postInviteAction = (playerId: number, eventId: string, inviteStatus: string): Promise<ApiListResponse> => {
+export const postInviteAction = (playerId: number, eventId: number, inviteStatus: string): Promise<Event[]> => {
   return fetch(endpoints.playerEvent, {
     method: 'PATCH',
     body: JSON.stringify({
@@ -94,26 +97,35 @@ export const postInviteAction = (playerId: number, eventId: string, inviteStatus
       event_id: eventId,
       invite_status: inviteStatus
     }),
-    headers: { 'Content-Type': 'application/json' }
+    headers: authHeaders()
   })
   .then(() => getAllEvents(playerId));
 };
 
-export const deleteEvent = (eventId: string, playerId: number): Promise<ApiListResponse> => {
+export const deleteEvent = (eventId: number, playerId: number): Promise<Event[]> => {
   return fetch(`${endpoints.singleEvent}/${eventId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
+    headers: authHeaders()
   })
   .then(() => getAllEvents(playerId));
 };
 
-export const postFriendship = (followerId: number, followeeId: number): Promise<ApiResponse> => {
+export interface FriendshipResponse {
+  id: number;
+  follower_id: number;
+  followee_id: number;
+  follower: Player;
+  followee: Player;
+}
+
+export const postFriendship = (followerId: number, followeeId: number): Promise<FriendshipResponse> => {
   return fetch(`${endpoints.friendship}`, {
     method: 'POST',
     body: JSON.stringify({
       follower_id: followerId,
       followee_id: followeeId
     }),
-    headers: { 'Content-Type': 'application/json' }
+    headers: authHeaders()
   })
   .then(resp => {
     if (resp.ok) {
@@ -131,7 +143,7 @@ export const deleteFriendship = (followerId: number, followeeId: number): Promis
       follower_id: followerId,
       followee_id: followeeId
     }),
-    headers: { 'Content-Type': 'application/json' }
+    headers: authHeaders()
   })
   .then(resp => {
     if (resp.ok) {
@@ -149,7 +161,7 @@ export const createNewProfile = (
   userName: string,
   password: string,
   passwordConfir: string
-): Promise<ApiResponse> => {
+): Promise<Player> => {
   return fetch(`${endpoints.players}`, {
     method: 'POST',
     body: JSON.stringify({
@@ -171,7 +183,7 @@ export const createNewProfile = (
   });
 };
 
-export const validateStandardLogin = (email: string, password: string): Promise<ApiResponse | undefined> => {
+export const validateStandardLogin = (email: string, password: string): Promise<LoginResponse | undefined> => {
   return fetch(`${endpoints.sessions}`, {
     method: 'POST',
     body: JSON.stringify({

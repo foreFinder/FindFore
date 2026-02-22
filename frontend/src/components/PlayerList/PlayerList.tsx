@@ -16,7 +16,7 @@ const PlayerList = ({ screenWidth, players, friends, handleFriends, userId }: Pl
 
   const mapPlayers = (type: (Friend | Player)[]) => {
     return type
-      .filter((t) => parseInt(String(t.id)) !== userId)
+      .filter((t) => t.id !== userId)
       .map((p) => (
         <PlayerCard
           key={p.id}

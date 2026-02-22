@@ -1,40 +1,26 @@
 export interface Player {
-  id: string;
-  name: string;
-}
-
-export interface PlayerAttributes {
+  id: number;
   name: string;
   phone: string;
   email: string;
   username: string;
-  friends: Friend[];
-  events: Event[];
+  friends: number[];
+  events: number[];
 }
 
 export interface Course {
-  id: string;
-  type: string;
-  attributes: CourseAttributes;
-}
-
-export interface CourseAttributes {
+  id: number;
   name: string;
   street: string;
   city: string;
   state: string;
   zip_code: string;
   phone: string;
-  cost: number;
+  cost: string;
 }
 
 export interface Event {
-  id: string;
-  type: string;
-  attributes: EventAttributes;
-}
-
-export interface EventAttributes {
+  id: number;
   course_name: string;
   date: string;
   tee_time: string;
@@ -50,6 +36,17 @@ export interface EventAttributes {
   remaining_spots: number;
 }
 
+export interface LoginResponse {
+  id: number;
+  name: string;
+  phone: string;
+  email: string;
+  username: string;
+  friends: number[];
+  events: number[];
+  token: string;
+}
+
 export interface Friend {
   id: number;
   name: string;
@@ -61,6 +58,6 @@ export interface HandleFriends {
 }
 
 export interface HandleInviteAction {
-  update: (eventId: string, status: string) => void;
+  update: (eventId: number, status: string) => void;
   cancel: (event: Event) => void;
 }

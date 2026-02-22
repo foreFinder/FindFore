@@ -30,14 +30,14 @@ const Dashboard = ({
   const getAvailable = useCallback(() => {
     return events.filter((event) => {
       if (
-        event.attributes.declined.includes(currentUserId) ||
-        event.attributes.accepted.includes(currentUserId) ||
-        event.attributes.closed.includes(currentUserId)
+        event.declined.includes(currentUserId) ||
+        event.accepted.includes(currentUserId) ||
+        event.closed.includes(currentUserId)
       ) {
         return false;
       } else if (
-        event.attributes.pending.includes(currentUserId) ||
-        !event.attributes.private
+        event.pending.includes(currentUserId) ||
+        !event.private
       ) {
         return true;
       }
@@ -48,7 +48,7 @@ const Dashboard = ({
 
   const getCommitted = useCallback(() => {
     return events.filter((event) =>
-      event.attributes.accepted.includes(currentUserId)
+      event.accepted.includes(currentUserId)
     );
   }, [events, currentUserId]);
 

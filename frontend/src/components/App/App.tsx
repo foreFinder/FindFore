@@ -3,7 +3,7 @@ import Dashboard from '../Dashboard/Dashboard';
 import PlayerList from '../PlayerList/PlayerList';
 import Login from '../Login/Login';
 import CreateProfile from '../CreateProfile/CreateProfile';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -30,16 +30,14 @@ function App() {
   const [hostPlayer, setHostPlayer] = useState<number>(0);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
-  const makeFriendList = useRef<() => Friend[]>(() => []);
 
   const addFriend = (friend: Friend) => {
     postFriendship(hostPlayer, friend.id).then((data) => {
-      const attrs = data.data as Record<string, Record<string, { id: number; name: string }>>;
       setFriends([
         ...friends,
         {
-          id: attrs.attributes.followee.id,
-          name: attrs.attributes.followee.name,
+          id: data.followee.id,
+          name: data.followee.name,
         },
       ]);
     });
@@ -55,16 +53,9 @@ function App() {
     );
   };
 
-  makeFriendList.current = () => {
-    const friendList = allPlayers.filter((p) =>
-      (hostPlayer as unknown as Record<string, Record<string, number[]>>)?.attributes?.friends?.includes(parseInt(p.id))
-    );
-    return friendList.map((f) => ({ name: f.name, id: parseInt(f.id) }));
-  };
-
-  const updateInvite = (eventId: string, status: string) => {
+  const updateInvite = (eventId: number, status: string) => {
     postInviteAction(hostPlayer, eventId, status).then((events) =>
-      setEvents(events.data as unknown as Event[])
+      setEvents(events)
     );
   };
 
@@ -72,11 +63,11 @@ function App() {
     validateStandardLogin(email, password)
       .then(data => {
         if (!data) return;
-        const player = data.data as Record<string, unknown>;
-        const attrs = player.attributes as Record<string, unknown>;
-        setHostPlayer(parseInt(player.id as string));
-        setFriends(attrs.friends as Friend[]);
-        setEvents(attrs.events as Event[]);
+        setHostPlayer(data.id);
+        if (data.token) {
+          localStorage.setItem('jwt_token', data.token);
+        }
+        // Friends will be populated from allPlayers once hostPlayer is set
       });
   };
 
@@ -85,43 +76,43 @@ function App() {
   }, [hostPlayer, friends, events]);
 
   const cancelCommitment = (event: Event) => {
-    if (event.attributes.host_id === hostPlayer) {
+    if (event.host_id === hostPlayer) {
       deleteEvent(event.id, hostPlayer).then((events) =>
-        setEvents(events.data as unknown as Event[])
+        setEvents(events)
       );
     } else {
       postInviteAction(hostPlayer, event.id, 'declined').then((events) =>
-        setEvents(events.data as unknown as Event[])
+        setEvents(events)
       );
     }
   };
 
   const refreshEvents = () => {
-    getAllEvents(hostPlayer).then((events) => setEvents(events.data as unknown as Event[]));
+    getAllEvents(hostPlayer).then((events) => setEvents(events));
   };
 
   const handleResize = () => setScreenWidth(window.innerWidth);
 
   useEffect(() => {
     getAllPlayers().then((players) => {
-      setAllPlayers(
-        players.data.map((p) => {
-          const attrs = p as Record<string, unknown>;
-          const attributes = attrs.attributes as Record<string, string>;
-          return { name: attributes.name, id: attrs.id as string };
-        })
-      );
+      setAllPlayers(players);
     });
-    getAllCourses().then((courses) => setCourses(courses.data as unknown as Course[]));
+    getAllCourses().then((courses) => setCourses(courses));
   }, []);
 
   useEffect(() => {
-    setFriends(makeFriendList.current());
-
     if (hostPlayer) {
+      // Build friend list from allPlayers + the logged-in player's friends array
+      const currentPlayer = allPlayers.find((p) => p.id === hostPlayer);
+      if (currentPlayer && currentPlayer.friends) {
+        const friendList = allPlayers
+          .filter((p) => currentPlayer.friends.includes(p.id))
+          .map((f) => ({ name: f.name, id: f.id }));
+        setFriends(friendList);
+      }
+
       getAllEvents(hostPlayer).then((events) => {
-        console.log(events);
-        setEvents(events.data as unknown as Event[]);
+        setEvents(events);
       });
     }
   }, [allPlayers, hostPlayer]);

@@ -1,0 +1,41 @@
+package router
+
+import (
+	"github.com/go-chi/chi/v5"
+	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
+
+	"github.com/ericrabun/findfore-go/internal/handler"
+	"github.com/ericrabun/findfore-go/internal/middleware"
+)
+
+func New(h *handler.Handler, jwtSecret string) *chi.Mux {
+	r := chi.NewRouter()
+
+	r.Use(chimiddleware.Logger)
+	r.Use(chimiddleware.Recoverer)
+	r.Use(cors.Handler(middleware.CorsHandler()))
+	r.Use(middleware.AuthOptional(jwtSecret))
+
+	r.Route("/api/v1", func(r chi.Router) {
+		r.Get("/courses", h.ListCourses)
+
+		r.Get("/players", h.ListPlayers)
+		r.Post("/players", h.CreatePlayer)
+		r.Get("/players/{player_id}/events", h.ListEvents)
+
+		r.Get("/events", h.ListEvents)
+		r.Get("/event/{id}", h.GetEvent)
+		r.Post("/event", h.CreateEvent)
+		r.Delete("/event/{id}", h.DeleteEvent)
+
+		r.Post("/friendship", h.CreateFriendship)
+		r.Delete("/friendship", h.DeleteFriendship)
+
+		r.Patch("/player-event", h.UpdatePlayerEvent)
+
+		r.Post("/sessions", h.CreateSession)
+	})
+
+	return r
+}

@@ -66,8 +66,8 @@ const TeeTimeContainer = ({
 
   useEffect(() => {
     if (getEventType.current() === 'available') {
-      setPublicInvites(events.filter((event) => !event.attributes.private));
-      setPrivateInvites(events.filter((event) => event.attributes.private));
+      setPublicInvites(events.filter((event) => !event.private));
+      setPrivateInvites(events.filter((event) => event.private));
     } else {
       setCommittedTeeTimes(events);
     }
