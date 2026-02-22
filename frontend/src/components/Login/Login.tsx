@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Paper, TextInput, PasswordInput, Button, Title, Stack, Group } from '@mantine/core';
+import { Paper, TextInput, PasswordInput, Button, Title, Stack, Text, Center, Box } from '@mantine/core';
+import { GiGolfTee } from 'react-icons/gi';
 
 interface LoginProps {
   validateLogin: (email: string, password: string) => void;
@@ -11,13 +12,22 @@ function Login({ validateLogin }: LoginProps) {
   const [password, setPassword] = useState('');
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '3em' }}>
-      <Paper shadow='md' p='xl' style={{ width: '90%', maxWidth: '50rem' }}>
+    <Center style={{ minHeight: 'calc(100vh - 64px)' }} p='md'>
+      <Paper shadow='lg' p='xl' maw={420} w='100%'>
         <form onSubmit={(e) => e.preventDefault()}>
-          <Title order={2} ta='center' mb='lg'>
-            Welcome to ForeFinder
-          </Title>
-          <Stack gap='md' maw={400} mx='auto'>
+          <Stack align='center' gap='xs' mb='xl'>
+            <Box c='forest.6' style={{ fontSize: '2.5rem' }}>
+              <GiGolfTee />
+            </Box>
+            <Title order={2} ta='center' c='forest.9'>
+              Welcome back
+            </Title>
+            <Text c='dimmed' size='sm'>
+              Sign in to find your next round
+            </Text>
+          </Stack>
+
+          <Stack gap='md'>
             <TextInput
               label='Email'
               type='email'
@@ -35,28 +45,27 @@ function Login({ validateLogin }: LoginProps) {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-          </Stack>
-          <Group justify='center' mt='xl' gap='md'>
             <Button
-              color='green'
+              color='forest'
+              size='md'
+              fullWidth
               onClick={() => validateLogin(email, password)}
               className='form-submit'
+              mt='sm'
             >
-              Login
+              Sign In
             </Button>
-            <Button
-              component={Link}
-              to='/create-profile'
-              variant='outline'
-              color='green'
-              className='form-submit'
-            >
-              Create Profile
-            </Button>
-          </Group>
+          </Stack>
+
+          <Text ta='center' size='sm' c='dimmed' mt='lg'>
+            Don't have an account?{' '}
+            <Text component={Link} to='/create-profile' c='forest.6' fw={600} inherit style={{ textDecoration: 'none' }}>
+              Create one
+            </Text>
+          </Text>
         </form>
       </Paper>
-    </div>
+    </Center>
   );
 }
 

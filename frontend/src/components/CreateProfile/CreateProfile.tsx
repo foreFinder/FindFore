@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { createNewProfile } from '../../APICalls/APICalls';
-import { Paper, TextInput, PasswordInput, Button, Title, Stack } from '@mantine/core';
+import { Paper, TextInput, PasswordInput, Button, Title, Stack, Text, Center, Divider, Box } from '@mantine/core';
+import { GiGolfTee } from 'react-icons/gi';
 
 function CreateProfile() {
   const [name, setName] = useState('');
@@ -24,13 +25,23 @@ function CreateProfile() {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '3em' }}>
-      <Paper shadow='md' p='xl' style={{ width: '90%', maxWidth: '50rem' }}>
+    <Center style={{ minHeight: 'calc(100vh - 64px)' }} p='md'>
+      <Paper shadow='lg' p='xl' maw={420} w='100%'>
         <form onSubmit={(e) => e.preventDefault()}>
-          <Title order={2} ta='center' mb='lg'>
-            Create a New Profile
-          </Title>
-          <Stack gap='md' maw={400} mx='auto'>
+          <Stack align='center' gap='xs' mb='xl'>
+            <Box c='forest.6' style={{ fontSize: '2.5rem' }}>
+              <GiGolfTee />
+            </Box>
+            <Title order={2} ta='center' c='forest.9'>
+              Create your profile
+            </Title>
+            <Text c='dimmed' size='sm'>
+              Join the ForeFinder community
+            </Text>
+          </Stack>
+
+          <Stack gap='md'>
+            <Text fw={600} size='sm' c='forest.8'>Personal Info</Text>
             <TextInput
               label='Full Name'
               id='name'
@@ -60,6 +71,10 @@ function CreateProfile() {
               placeholder='ex: john.doe@example.com'
               required
             />
+
+            <Divider my='xs' color='sand.2' />
+
+            <Text fw={600} size='sm' c='forest.8'>Account</Text>
             <TextInput
               label='Username'
               id='userName'
@@ -88,10 +103,11 @@ function CreateProfile() {
               required
             />
             <Button
-              color='green'
+              color='forest'
+              size='md'
               onClick={submitProfile}
               fullWidth
-              mt='md'
+              mt='sm'
               className='form-submit'
             >
               Create Profile
@@ -99,7 +115,7 @@ function CreateProfile() {
           </Stack>
         </form>
       </Paper>
-    </div>
+    </Center>
   );
 }
 

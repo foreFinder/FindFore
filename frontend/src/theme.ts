@@ -1,23 +1,64 @@
-import { createTheme, MantineThemeOverride } from '@mantine/core';
+import { createTheme, MantineThemeOverride, MantineColorsTuple } from '@mantine/core';
+
+const forest: MantineColorsTuple = [
+  '#e9f5ec',
+  '#d3ebd9',
+  '#a5d6b3',
+  '#74c08b',
+  '#52a86d',
+  '#3d9459',
+  '#2E5A2E',
+  '#275028',
+  '#1f4220',
+  '#1a3c1a',
+];
+
+const sand: MantineColorsTuple = [
+  '#fdfbf7',
+  '#f7f3eb',
+  '#efe8d8',
+  '#e4d9c0',
+  '#d6c6a3',
+  '#c4a876',
+  '#b5975f',
+  '#a0844e',
+  '#87703f',
+  '#6e5b33',
+];
+
+const sage: MantineColorsTuple = [
+  '#f2f7f3',
+  '#e5efe7',
+  '#c8dece',
+  '#a8cab2',
+  '#8ab899',
+  '#71a883',
+  '#5e9671',
+  '#4d7f5e',
+  '#3f6a4e',
+  '#335740',
+];
 
 const theme: MantineThemeOverride = createTheme({
-  primaryColor: 'green',
+  primaryColor: 'forest',
   colors: {
-    green: [
-      '#e8f5ec',
-      '#d1ebd9',
-      '#a3d7b3',
-      '#74c28b',
-      '#59a371',
-      '#4a9463',
-      '#368552',
-      '#2d7246',
-      '#245f3a',
-      '#1a4c2e',
-    ],
+    forest,
+    sand,
+    sage,
   },
-  fontFamily: 'Quicksand, sans-serif',
+  fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  headings: {
+    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    fontWeight: '600',
+  },
   defaultRadius: 'md',
+  shadows: {
+    xs: '0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06)',
+    sm: '0 1px 3px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.08)',
+    md: '0 2px 4px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.08)',
+    lg: '0 4px 8px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.10)',
+    xl: '0 8px 16px rgba(0, 0, 0, 0.08), 0 16px 48px rgba(0, 0, 0, 0.12)',
+  },
   components: {
     Button: {
       defaultProps: {
@@ -26,12 +67,28 @@ const theme: MantineThemeOverride = createTheme({
     },
     Card: {
       defaultProps: {
-        radius: 8,
+        radius: 16,
       },
     },
     Paper: {
       defaultProps: {
         radius: 16,
+        shadow: 'md',
+      },
+    },
+    TextInput: {
+      defaultProps: {
+        radius: 'md',
+      },
+    },
+    PasswordInput: {
+      defaultProps: {
+        radius: 'md',
+      },
+    },
+    Select: {
+      defaultProps: {
+        radius: 'md',
       },
     },
   },

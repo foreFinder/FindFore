@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import { Card, Grid, Text, Button, Group } from '@mantine/core';
+import { Card, Text, Button, Group } from '@mantine/core';
+import { FiCalendar, FiClock, FiUser, FiUsers } from 'react-icons/fi';
 import type { Event, HandleInviteAction } from '../../types';
 
 interface TeeTimeProps {
@@ -23,46 +24,51 @@ const TeeTime = ({ type, event, handleInviteAction }: TeeTimeProps) => {
     return `${hours}:${minutes} ${period}`;
   };
 
+  const filledSpots = event.open_spots - event.remaining_spots;
+
   return (
-    <Card className='tee-time' shadow='sm' mb='md' withBorder>
-      <Card.Section bg='gray.0' p='sm'>
-        <Text fw={500} ta='center'>
-          {event.course_name}
-        </Text>
-      </Card.Section>
+    <Card
+      className='tee-time ff-card-hover'
+      shadow='xs'
+      withBorder
+      style={{ borderColor: 'var(--mantine-color-sand-2)' }}
+      p='md'
+    >
+      <Text fw={700} c='forest.9' size='md' mb='xs'>
+        {event.course_name}
+      </Text>
 
-      <Grid p='sm' gutter='xs'>
-        <Grid.Col span={4}>
-          <Text fw={500} size='sm'>Date</Text>
+      <Group gap='lg' mb='xs'>
+        <Group gap={6}>
+          <FiCalendar size={14} style={{ color: 'var(--mantine-color-dimmed)' }} />
           <Text size='sm' c='dimmed'>{dayjs(event.date).format('MMM D')}</Text>
-        </Grid.Col>
-        <Grid.Col span={4}>
-          <Text fw={500} size='sm'>Time slot</Text>
+        </Group>
+        <Group gap={6}>
+          <FiClock size={14} style={{ color: 'var(--mantine-color-dimmed)' }} />
           <Text size='sm' c='dimmed'>{formatTime(event.tee_time)}</Text>
-        </Grid.Col>
-        <Grid.Col span={4} ta='right'>
-          <Text fw={500} size='sm'>Holes</Text>
-          <Text size='sm' c='dimmed'>{event.number_of_holes}</Text>
-        </Grid.Col>
-        <Grid.Col span={8}>
-          <Text fw={500} size='sm'>Host</Text>
-          <Text size='sm' c='dimmed'>{event.host_name}</Text>
-        </Grid.Col>
-        <Grid.Col span={4} ta='right'>
-          <Text fw={500} size='sm'>Spots filled</Text>
-          <Text size='sm' c='dimmed'>
-            {event.open_spots - event.remaining_spots} of{' '}
-            {event.open_spots}
-          </Text>
-        </Grid.Col>
-      </Grid>
+        </Group>
+      </Group>
 
-      <Group justify='flex-end' p='sm' pt={0} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
+      <Group gap='lg' mb='sm'>
+        <Group gap={6}>
+          <FiUser size={14} style={{ color: 'var(--mantine-color-dimmed)' }} />
+          <Text size='sm' c='dimmed'>{event.host_name}</Text>
+        </Group>
+        <Group gap={6}>
+          <FiUsers size={14} style={{ color: 'var(--mantine-color-dimmed)' }} />
+          <Text size='sm' c='dimmed'>
+            {filledSpots}/{event.open_spots} spots filled
+          </Text>
+        </Group>
+      </Group>
+
+      <Group justify='flex-end' gap='xs'>
         {type === 'committed' && (
           <Button
             className='cancel'
             color='red'
-            size='xs'
+            variant='subtle'
+            size='sm'
             onClick={() => handleInviteAction.cancel(event)}
           >
             Cancel
@@ -73,15 +79,17 @@ const TeeTime = ({ type, event, handleInviteAction }: TeeTimeProps) => {
             <Button
               className='decline'
               color='red'
-              size='xs'
+              variant='subtle'
+              size='sm'
               onClick={() => handleInviteAction.update(event.id, 'declined')}
             >
               Decline
             </Button>
             <Button
               className='accept'
-              color='green'
-              size='xs'
+              color='forest'
+              variant='filled'
+              size='sm'
               onClick={() => handleInviteAction.update(event.id, 'accepted')}
             >
               Accept

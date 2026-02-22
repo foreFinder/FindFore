@@ -139,6 +139,7 @@ function App() {
             <Dashboard
               events={events}
               currentUserId={hostPlayer}
+              currentUserName={allPlayers.find((p) => p.id === hostPlayer)?.name || ''}
               screenWidth={screenWidth}
               handleInviteAction={{
                 update: updateInvite,

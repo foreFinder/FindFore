@@ -15,6 +15,9 @@ const TypeSelector = ({ handleClick }: TypeSelectorProps) => {
         setValue(val);
         handleClick(val);
       }}
+      size='xs'
+      color='forest'
+      radius='xl'
       data={[
         { label: 'Friends', value: 'private' },
         { label: 'Public', value: 'public' },

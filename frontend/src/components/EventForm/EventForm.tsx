@@ -12,6 +12,8 @@ import {
   Group,
   Text,
   SimpleGrid,
+  Center,
+  Box,
 } from '@mantine/core';
 import { DateInput, TimeInput } from '@mantine/dates';
 import dayjs from 'dayjs';
@@ -79,126 +81,138 @@ function EventForm({ courses, friends, hostId, refreshEvents }: EventFormProps) 
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '3em' }}>
-        <Paper shadow='md' style={{ width: '90%', maxWidth: '50rem', overflow: 'hidden' }}>
+      <Center p='md' style={{ minHeight: 'calc(100vh - 64px)' }}>
+        <Paper shadow='lg' p='xl' maw={520} w='100%'>
           <form onSubmit={(e) => e.preventDefault()}>
-            <div style={{ background: 'rgb(221, 218, 218)', padding: '1rem', textAlign: 'center' }}>
-              <Title order={2} size='1.25rem' fw={600}>
-                Create a New Tee Time
+            <Box mb='xl'>
+              <Title order={2} c='forest.9' ta='center'>
+                Create a Tee Time
               </Title>
-            </div>
+              <Text c='dimmed' size='sm' ta='center' mt={4}>
+                Set up a round and invite your friends
+              </Text>
+            </Box>
 
-            <Stack gap='md' p='xl'>
-              <Select
-                label='Golf Course'
-                placeholder='Please Select a Course'
-                value={golfCourse}
-                onChange={setGolfCourse}
-                data={courses.map((course) => ({
-                  value: String(course.id),
-                  label: course.name,
-                }))}
-                required
-              />
-
-              <DateInput
-                label='Date'
-                value={date}
-                onChange={setDate}
-                minDate={tomorrow}
-                required
-              />
-
-              <TimeInput
-                label='Tee Time (7am to 5pm)'
-                value={teeTime}
-                onChange={(e) => setTeeTime(e.target.value)}
-                required
-              />
-
-              <Select
-                label='Total Players (including you)'
-                value={openSpots}
-                onChange={setOpenSpots}
-                data={[
-                  { value: '2', label: '2' },
-                  { value: '3', label: '3' },
-                  { value: '4', label: '4' },
-                ]}
-              />
-
-              <Radio.Group
-                label='Number of Holes'
-                value={numHoles}
-                onChange={setNumHoles}
-              >
-                <Group mt='xs'>
-                  <Radio value='18' label='18' />
-                  <Radio value='9' label='9' />
-                </Group>
-              </Radio.Group>
-
-              <Radio.Group
-                label='Public or Private'
-                value={isPrivate ? 'private' : 'public'}
-                onChange={(val) => setIsPrivate(val === 'private')}
-              >
-                <Group mt='xs'>
-                  <Radio value='public' label='Public' />
-                  <Radio value='private' label='Private' />
-                </Group>
-              </Radio.Group>
-
-              {isPrivate && (
+            <Stack gap='lg'>
+              <Box>
+                <Text fw={600} size='sm' c='forest.8' mb='xs'>When</Text>
                 <Stack gap='sm'>
-                  <Text fw={500} className='friends-title'>
-                    Friends to Invite:
-                  </Text>
-                  {!friends.length && (
-                    <Text fs='italic' c='dimmed'>
-                      You don't have any friends...
-                      <br />
-                      Make some by creating a public event!
-                    </Text>
-                  )}
-                  <SimpleGrid cols={2}>
-                    {friends.map((friend, i) => (
-                      <Checkbox
-                        key={i}
-                        label={friend.name}
-                        value={String(friend.id)}
-                        checked={selectedFriends.includes(friend.id)}
-                        onChange={(e) =>
-                          addFriendToInvite(friend.id, e.currentTarget.checked)
-                        }
-                        disabled={allFriends}
-                      />
-                    ))}
-                  </SimpleGrid>
-                  <Checkbox
-                    label='Invite All Friends'
-                    checked={allFriends}
-                    onChange={(e) =>
-                      inviteAllFriends(e.currentTarget.checked)
-                    }
+                  <DateInput
+                    label='Date'
+                    value={date}
+                    onChange={setDate}
+                    minDate={tomorrow}
+                    required
+                  />
+                  <TimeInput
+                    label='Tee Time (7am to 5pm)'
+                    value={teeTime}
+                    onChange={(e) => setTeeTime(e.target.value)}
+                    required
                   />
                 </Stack>
-              )}
-            </Stack>
+              </Box>
 
-            <div style={{ background: 'rgb(221, 218, 218)', padding: '1rem', display: 'flex', justifyContent: 'center' }}>
+              <Box>
+                <Text fw={600} size='sm' c='forest.8' mb='xs'>Details</Text>
+                <Stack gap='sm'>
+                  <Select
+                    label='Golf Course'
+                    placeholder='Please Select a Course'
+                    value={golfCourse}
+                    onChange={setGolfCourse}
+                    data={courses.map((course) => ({
+                      value: String(course.id),
+                      label: course.name,
+                    }))}
+                    required
+                  />
+                  <Select
+                    label='Total Players (including you)'
+                    value={openSpots}
+                    onChange={setOpenSpots}
+                    data={[
+                      { value: '2', label: '2' },
+                      { value: '3', label: '3' },
+                      { value: '4', label: '4' },
+                    ]}
+                  />
+                  <Radio.Group
+                    label='Number of Holes'
+                    value={numHoles}
+                    onChange={setNumHoles}
+                  >
+                    <Group mt='xs'>
+                      <Radio value='18' label='18' color='forest' />
+                      <Radio value='9' label='9' color='forest' />
+                    </Group>
+                  </Radio.Group>
+                  <Radio.Group
+                    label='Public or Private'
+                    value={isPrivate ? 'private' : 'public'}
+                    onChange={(val) => setIsPrivate(val === 'private')}
+                  >
+                    <Group mt='xs'>
+                      <Radio value='public' label='Public' color='forest' />
+                      <Radio value='private' label='Private' color='forest' />
+                    </Group>
+                  </Radio.Group>
+                </Stack>
+              </Box>
+
+              {isPrivate && (
+                <Box>
+                  <Text fw={600} size='sm' c='forest.8' mb='xs'>Invite Friends</Text>
+                  <Stack gap='sm'>
+                    {!friends.length && (
+                      <Text fs='italic' c='dimmed' size='sm'>
+                        You don't have any friends yet.
+                        <br />
+                        Make some by creating a public event!
+                      </Text>
+                    )}
+                    <SimpleGrid cols={2}>
+                      {friends.map((friend, i) => (
+                        <Checkbox
+                          key={i}
+                          label={friend.name}
+                          value={String(friend.id)}
+                          checked={selectedFriends.includes(friend.id)}
+                          onChange={(e) =>
+                            addFriendToInvite(friend.id, e.currentTarget.checked)
+                          }
+                          disabled={allFriends}
+                          color='forest'
+                        />
+                      ))}
+                    </SimpleGrid>
+                    <Checkbox
+                      label='Invite All Friends'
+                      checked={allFriends}
+                      onChange={(e) =>
+                        inviteAllFriends(e.currentTarget.checked)
+                      }
+                      color='forest'
+                    />
+                  </Stack>
+                </Box>
+              )}
+
               <Button
-                color='green'
+                color='forest'
+                size='md'
+                fullWidth
                 disabled={!golfCourse || !isValidTime}
                 onClick={submitForm}
                 className='form-submit'
+                mt='sm'
               >
                 Create Tee Time
               </Button>
-            </div>
+            </Stack>
           </form>
         </Paper>
-      </div>
+      </Center>
       {postAttempt && (
         <PostResultMessage
           postError={postError}

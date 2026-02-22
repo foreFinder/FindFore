@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Burger, Anchor, Group, Stack } from '@mantine/core';
+import { Link, useLocation } from 'react-router-dom';
+import { Burger, Anchor, Group, Drawer, Stack, UnstyledButton } from '@mantine/core';
 import { GiGolfTee } from 'react-icons/gi';
 
 interface HeaderProps {
@@ -9,72 +9,86 @@ interface HeaderProps {
 
 const Header = ({ screenWidth }: HeaderProps) => {
   const [mobileNav, setMobileNav] = useState(false);
-  const [selected, setSelected] = useState('');
+  const location = useLocation();
 
-  const handleMobileNav = () => {
-    setMobileNav(!mobileNav);
-  };
+  const isActive = (path: string) => location.pathname === path;
 
-  const handleMenus = () => {
-    setMobileNav(false);
+  const navLinkStyle = (path: string): React.CSSProperties => ({
+    color: '#fff',
+    fontSize: '1.1rem',
+    fontWeight: 500,
+    borderBottom: isActive(path) ? '2px solid #c4a876' : '2px solid transparent',
+    height: 64,
+    display: 'flex',
+    alignItems: 'center',
+    textDecoration: 'none',
+    transition: 'border-color 0.2s ease',
+  });
+
+  const mobileLinkStyle: React.CSSProperties = {
+    color: '#fff',
+    fontSize: '1.25rem',
+    fontWeight: 500,
+    textDecoration: 'none',
+    padding: '0.75rem 0',
   };
 
   return (
     <header
       style={{
-        background: '#59a371',
-        height: 80,
+        background: '#1a3c1a',
+        height: 64,
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        fontSize: '2rem',
         position: 'sticky',
         top: 0,
         zIndex: 999,
-        marginBottom: '2em',
-        boxShadow: '0px 1px 8px 0px #00000069',
+        borderBottom: '1px solid rgba(255,255,255,0.1)',
       }}
     >
       <nav
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          height: 80,
+          height: 64,
           width: '100%',
           maxWidth: 1600,
           marginRight: 'auto',
           marginLeft: 'auto',
-          paddingRight: screenWidth <= 991 ? 30 : 50,
-          paddingLeft: screenWidth <= 991 ? 30 : 50,
+          paddingRight: screenWidth <= 991 ? 20 : 40,
+          paddingLeft: screenWidth <= 991 ? 20 : 40,
           alignItems: 'center',
         }}
       >
         {screenWidth <= 1024 && (
           <Burger
             opened={mobileNav}
-            onClick={handleMobileNav}
+            onClick={() => setMobileNav(!mobileNav)}
             color='white'
             data-cy='ham-menu'
+            size='sm'
           />
         )}
 
         <Anchor
           component={Link}
           to='/dashboard'
-          onClick={handleMenus}
+          onClick={() => setMobileNav(false)}
           underline='never'
           style={{
             color: '#fff',
-            fontSize: screenWidth <= 489 ? '1.9rem' : screenWidth <= 960 ? '2.4rem' : '3rem',
-            fontStyle: 'italic',
+            fontSize: screenWidth <= 489 ? '1.4rem' : screenWidth <= 960 ? '1.6rem' : '1.8rem',
+            fontWeight: 700,
             display: 'flex',
             alignItems: 'center',
-            textShadow: '2px 3px 5px #00000050',
+            gap: '0.5rem',
             textDecoration: 'none',
+            letterSpacing: '-0.02em',
           }}
         >
-          <GiGolfTee data-cy='logo' style={{ marginRight: '0.5rem', color: '#fff' }} />
+          <GiGolfTee data-cy='logo' style={{ color: '#c4a876', fontSize: '1.4em' }} />
           ForeFinder
         </Anchor>
 
@@ -84,18 +98,8 @@ const Header = ({ screenWidth }: HeaderProps) => {
               component={Link}
               to='/dashboard'
               data-cy='dashboard-link'
-              onClick={() => { setSelected('dashboard'); handleMenus(); }}
               underline='never'
-              style={{
-                color: '#fff',
-                fontSize: '1.5rem',
-                textShadow: '2px 3px 5px #00000052',
-                borderBottom: selected === 'dashboard' ? '2px solid #4b59f7' : '2px solid transparent',
-                height: 80,
-                display: 'flex',
-                alignItems: 'center',
-                textDecoration: 'none',
-              }}
+              style={navLinkStyle('/dashboard')}
             >
               Dashboard
             </Anchor>
@@ -103,87 +107,62 @@ const Header = ({ screenWidth }: HeaderProps) => {
               component={Link}
               to='/event-form'
               data-cy='form-link'
-              onClick={() => { setSelected('eventForm'); handleMenus(); }}
               underline='never'
-              style={{
-                color: '#fff',
-                fontSize: '1.5rem',
-                textShadow: '2px 3px 5px #00000052',
-                borderBottom: selected === 'eventForm' ? '2px solid #4b59f7' : '2px solid transparent',
-                height: 80,
-                display: 'flex',
-                alignItems: 'center',
-                textDecoration: 'none',
-              }}
+              style={navLinkStyle('/event-form')}
             >
               Create Tee Time
             </Anchor>
           </Group>
         ) : (
-          mobileNav && (
-            <Stack
-              data-cy='nav-menu'
-              onClick={handleMenus}
-              style={{
-                position: 'absolute',
-                top: 80,
-                left: 0,
-                width: '100%',
-                background: '#59a371',
-                zIndex: 999,
-                padding: '2rem 0',
-              }}
-              align='center'
-              gap='xl'
-            >
-              <Anchor
+          <Drawer
+            opened={mobileNav}
+            onClose={() => setMobileNav(false)}
+            size='280'
+            position='left'
+            data-cy='nav-menu'
+            withCloseButton={false}
+            overlayProps={{ backgroundOpacity: 0.4 }}
+            styles={{
+              content: {
+                background: '#1a3c1a',
+              },
+              body: {
+                padding: '2rem 1.5rem',
+              },
+            }}
+          >
+            <Stack gap='xs' mt='md'>
+              <UnstyledButton
                 component={Link}
                 to='/dashboard'
                 data-cy='dashboard-link'
-                onClick={() => setSelected('dashboard')}
-                underline='never'
-                style={{
-                  color: '#fff',
-                  fontSize: '1.5rem',
-                  textShadow: '2px 3px 5px #00000052',
-                  textDecoration: 'none',
-                }}
+                onClick={() => setMobileNav(false)}
+                style={mobileLinkStyle}
               >
                 Dashboard
-              </Anchor>
-              <Anchor
+              </UnstyledButton>
+              <UnstyledButton
                 component={Link}
                 to='/event-form'
                 data-cy='form-link'
-                onClick={() => setSelected('eventForm')}
-                underline='never'
-                style={{
-                  color: '#fff',
-                  fontSize: '1.5rem',
-                  textShadow: '2px 3px 5px #00000052',
-                  textDecoration: 'none',
-                }}
+                onClick={() => setMobileNav(false)}
+                style={mobileLinkStyle}
               >
                 Create Tee Time
-              </Anchor>
+              </UnstyledButton>
               {screenWidth <= 1024 && (
-                <Anchor
+                <UnstyledButton
                   component={Link}
                   to='/community'
                   data-cy='community-link'
-                  underline='never'
-                  style={{
-                    color: '#fff',
-                    fontSize: '1.5rem',
-                    textShadow: '2px 3px 5px #00000052',
-                    textDecoration: 'none',
-                  }}
+                  onClick={() => setMobileNav(false)}
+                  style={mobileLinkStyle}
                 >
                   My Community
-                </Anchor>
+                </UnstyledButton>
               )}
             </Stack>
-          )
+          </Drawer>
         )}
       </nav>
     </header>

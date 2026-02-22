@@ -1,3 +1,10 @@
+:root {
+  --ff-header-height: 64px;
+  --ff-sidebar-width: 320px;
+  --ff-transition: 0.2s ease;
+  --ff-bg: #fdfbf7;
+}
+
 html {
   height: 100%;
   scroll-behavior: smooth;
@@ -5,10 +12,35 @@ html {
 
 body {
   height: 100%;
+  background-color: var(--ff-bg);
 }
 
 #root {
   display: grid;
-  grid-template-rows: 80px auto;
+  grid-template-rows: var(--ff-header-height) auto;
   height: 100%;
+}
+
+.ff-card-hover {
+  transition: transform var(--ff-transition), box-shadow var(--ff-transition);
+}
+
+.ff-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.10);
+}
+
+/* Button press effect */
+.mantine-Button-root {
+  transition: all 0.2s ease;
+}
+
+.mantine-Button-root:active {
+  transform: scale(0.97);
+}
+
+@keyframes ff-skeleton-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }

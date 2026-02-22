@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { SegmentedControl, Text } from '@mantine/core';
+import { SegmentedControl, Text, Stack, Button, ThemeIcon } from '@mantine/core';
+import { FiUsers } from 'react-icons/fi';
 import PlayerCard from '../PlayerCard/PlayerCard';
 import type { Friend, Player, HandleFriends } from '../../types';
 
@@ -33,36 +34,51 @@ const PlayerList = ({ screenWidth, players, friends, handleFriends, userId }: Pl
     <aside
       data-cy='player-list'
       style={{
-        padding: isDesktop ? 30 : 40,
+        padding: isDesktop ? '1.5rem' : '2rem',
         height: isDesktop ? '100%' : '100vh',
         width: isDesktop ? 320 : '100%',
-        backgroundColor: '#368552',
+        backgroundColor: '#fdfbf7',
         display: 'flex',
         flexDirection: 'column',
-        color: '#fff',
-        textAlign: 'center',
+        borderRight: isDesktop ? '1px solid var(--mantine-color-sand-2)' : 'none',
+        overflowY: 'auto',
       }}
     >
       <SegmentedControl
         value={playerType}
         onChange={setPlayerType}
-        mb='xl'
+        mb='lg'
+        color='forest'
+        fullWidth
         data={[
           { label: 'Friends', value: 'friends' },
           { label: 'Community', value: 'community' },
         ]}
         data-cy='player-type'
       />
-      <ul style={{ listStyleType: 'none', margin: 0, padding: 0 }}>
+      <Stack gap='xs'>
         {!friends.length && playerType === 'friends' && (
-          <Text fs='italic' c='white'>
-            You don't have any friends...
-            <br />
-            Add some from the community!
-          </Text>
+          <Stack align='center' gap='md' py='xl'>
+            <ThemeIcon size='xl' radius='xl' variant='light' color='forest'>
+              <FiUsers size={20} />
+            </ThemeIcon>
+            <Text ta='center' c='dimmed' size='sm'>
+              You don't have any friends yet.
+              <br />
+              Browse the community to connect!
+            </Text>
+            <Button
+              variant='light'
+              color='forest'
+              size='sm'
+              onClick={() => setPlayerType('community')}
+            >
+              Browse Community
+            </Button>
+          </Stack>
         )}
         {playerType === 'friends' ? mapPlayers(friends) : mapPlayers(players)}
-      </ul>
+      </Stack>
     </aside>
   );
 };

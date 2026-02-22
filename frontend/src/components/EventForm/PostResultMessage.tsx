@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Modal, Text, Anchor } from '@mantine/core';
+import { Modal, Text, Button, Stack, ThemeIcon } from '@mantine/core';
+import { FiCheck, FiAlertTriangle } from 'react-icons/fi';
 
 interface PostResultMessageProps {
   postError: boolean;
@@ -14,26 +15,35 @@ function PostResultMessage({ postError, refreshEvents }: PostResultMessageProps)
       centered
       withCloseButton={false}
       overlayProps={{ backgroundOpacity: 0.3 }}
+      radius='lg'
     >
-      <div className='message' style={{ textAlign: 'center', padding: '2rem' }}>
+      <Stack className='message' align='center' gap='md' py='lg'>
         {postError ? (
           <>
-            <Text>
+            <ThemeIcon size='xl' radius='xl' color='red' variant='light'>
+              <FiAlertTriangle size={24} />
+            </ThemeIcon>
+            <Text ta='center'>
               Sorry, we weren't able to send your event invitation. Please try again later.
             </Text>
-            <Anchor component={Link} to='/dashboard' mt='md' fw={700} c='green.6'>
+            <Button component={Link} to='/dashboard' color='forest' variant='light'>
               Back to Dashboard
-            </Anchor>
+            </Button>
           </>
         ) : (
           <>
-            <Text>Congrats, your tee time has been created!</Text>
-            <Anchor component={Link} to='/dashboard' mt='md' fw={700} c='green.6'>
+            <ThemeIcon size='xl' radius='xl' color='green' variant='light'>
+              <FiCheck size={24} />
+            </ThemeIcon>
+            <Text ta='center' fw={500}>
+              Congrats, your tee time has been created!
+            </Text>
+            <Button component={Link} to='/dashboard' color='forest'>
               Back to Dashboard
-            </Anchor>
+            </Button>
           </>
         )}
-      </div>
+      </Stack>
     </Modal>
   );
 }

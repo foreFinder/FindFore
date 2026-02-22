@@ -1,22 +1,21 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Paper, Title, Stack, Text, Anchor } from '@mantine/core';
-import { Link } from 'react-router-dom';
+import { Paper, Title, Stack, Badge, Group } from '@mantine/core';
+import { FiCalendar, FiMail } from 'react-icons/fi';
 
 import TeeTime from '../TeeTime/TeeTime';
+import EmptyState from '../EmptyState/EmptyState';
 import InviteTypeSelect from './InviteTypeSelect/InviteTypeSelect';
 import type { Event, HandleInviteAction } from '../../types';
 
 interface TeeTimeContainerProps {
   title: string;
   events: Event[];
-  windowWidth: number;
   handleInviteAction: HandleInviteAction;
 }
 
 const TeeTimeContainer = ({
   title,
   events,
-  windowWidth,
   handleInviteAction,
 }: TeeTimeContainerProps) => {
   const [publicInvites, setPublicInvites] = useState<Event[]>([]);
@@ -35,21 +34,10 @@ const TeeTimeContainer = ({
     }
   }, [title]);
 
-  const displayNoInviteMessage = () => {
-    return (
-      <Text className='no-invites-card' c='dimmed' ta='center' py='xl'>
-        There are currently no tee time invitations from{' '}
-        {invitesToDisplay === 'private'
-          ? 'your friends'
-          : 'the ForeFinder community'}
-        . Would you like to{' '}
-        <Anchor className='no-invites-link' component={Link} to='/event-form' fw={700} c='green.6'>
-          create an event
-        </Anchor>
-        ?
-      </Text>
-    );
-  };
+  const isAvailable = title === 'Available Tee Times';
+  const displayCount = isAvailable
+    ? (invitesToDisplay === 'private' ? privateInvites.length : publicInvites.length)
+    : committedTeeTimes.length;
 
   const getTeeTimes = (eventsType: Event[]) => {
     return eventsType.map((event) => {
@@ -74,18 +62,40 @@ const TeeTimeContainer = ({
   }, [events]);
 
   return (
-    <Paper className='tee-time-container' shadow='sm' style={{ maxHeight: '80vh', minHeight: '80vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ background: 'rgb(221, 218, 218)', padding: '1rem', textAlign: 'center', position: 'sticky', top: 0, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
-        <Title order={3} fw={600} size='1.25rem'>
-          {title}
-        </Title>
-      </div>
+    <Paper
+      className='tee-time-container'
+      shadow='sm'
+      style={{
+        maxHeight: 'calc(100vh - 280px)',
+        minHeight: 300,
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        border: '1px solid var(--mantine-color-sand-2)',
+      }}
+    >
+      <Group
+        justify='space-between'
+        align='center'
+        px='md'
+        py='sm'
+        style={{
+          borderBottom: '1px solid var(--mantine-color-sand-2)',
+        }}
+      >
+        <Group gap='sm'>
+          <Title order={4} fw={600} c='forest.9'>
+            {title}
+          </Title>
+          <Badge size='sm' variant='light' color='forest'>
+            {displayCount}
+          </Badge>
+        </Group>
 
-      {title === 'Available Tee Times' && windowWidth < 768 && (
-        <div style={{ padding: '0.75rem' }}>
+        {isAvailable && (
           <InviteTypeSelect handleClick={setInvitesToDisplay} />
-        </div>
-      )}
+        )}
+      </Group>
 
       <Stack gap='xs' p='md' style={{ overflowY: 'auto', flex: 1 }}>
         {title === 'Committed Tee Times' && getTeeTimes(committedTeeTimes)}
@@ -93,23 +103,29 @@ const TeeTimeContainer = ({
           ? getTeeTimes(privateInvites)
           : getTeeTimes(publicInvites)}
         {invitesToDisplay === '' && !events.length && (
-          <Text c='dimmed' ta='center' py='xl'>
-            You are not currently committed to any tee times. Hit accept on a tee time invitation to join.
-          </Text>
+          <EmptyState
+            icon={<FiCalendar size={20} />}
+            title='No committed tee times'
+            description='Accept an invite to join a round.'
+          />
         )}
-        {invitesToDisplay === 'private' &&
-          !privateInvites.length &&
-          displayNoInviteMessage()}
-        {invitesToDisplay === 'public' &&
-          !publicInvites.length &&
-          displayNoInviteMessage()}
+        {invitesToDisplay === 'private' && !privateInvites.length && (
+          <EmptyState
+            icon={<FiMail size={20} />}
+            title='No friend invitations'
+            description='No tee time invitations from your friends yet.'
+            actionLabel='Create One'
+          />
+        )}
+        {invitesToDisplay === 'public' && !publicInvites.length && (
+          <EmptyState
+            icon={<FiMail size={20} />}
+            title='No community invitations'
+            description='No tee time invitations from the community yet.'
+            actionLabel='Create One'
+          />
+        )}
       </Stack>
-
-      {title === 'Available Tee Times' && windowWidth >= 768 && (
-        <div style={{ background: 'rgb(221, 218, 218)', padding: '1rem', display: 'flex', justifyContent: 'center', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, position: 'sticky', bottom: 0 }}>
-          <InviteTypeSelect handleClick={setInvitesToDisplay} />
-        </div>
-      )}
     </Paper>
   );
 };
