@@ -33,6 +33,10 @@ function App() {
   const [loginError, setLoginError] = useState<string>('');
 
   const addFriend = (friend: Friend) => {
+    if (!hostPlayer) {
+      return;
+    }
+
     postFriendship(hostPlayer, friend.id).then((data) => {
       setFriends([
         ...friends,
@@ -45,6 +49,10 @@ function App() {
   };
 
   const removeFriend = (unFriend: Friend) => {
+    if (!hostPlayer) {
+      return;
+    }
+
     deleteFriendship(hostPlayer, unFriend.id).then(
       () => {
         setFriends([
