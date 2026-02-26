@@ -114,6 +114,15 @@ function CreateProfile() {
             >
               Create Profile
             </Button>
+            <Button
+              variant='subtle'
+              color='forest'
+              size='sm'
+              onClick={() => navigate('/login')}
+              fullWidth
+            >
+              Back to Login
+            </Button>
           </Stack>
         </form>
       </Paper>
