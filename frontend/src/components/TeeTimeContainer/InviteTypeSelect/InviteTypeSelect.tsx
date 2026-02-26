@@ -21,6 +21,7 @@ const TypeSelector = ({ handleClick }: TypeSelectorProps) => {
       data={[
         { label: 'Friends', value: 'private' },
         { label: 'Public', value: 'public' },
+        { label: 'Open', value: 'join' },
       ]}
     />
   );

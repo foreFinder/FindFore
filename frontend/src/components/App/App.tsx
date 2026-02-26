@@ -15,6 +15,8 @@ import {
   getAllCourses,
   getAllPlayers,
   getAllEvents,
+  getFriendsEvents,
+  joinEvent,
   postInviteAction,
   deleteEvent,
   postFriendship,
@@ -30,6 +32,7 @@ function App() {
   const [hostPlayer, setHostPlayer] = useState<number>(0);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
+  const [friendsEvents, setFriendsEvents] = useState<Event[]>([]);
   const [loginError, setLoginError] = useState<string>('');
 
   const addFriend = (friend: Friend) => {
@@ -63,9 +66,10 @@ function App() {
   };
 
   const updateInvite = (eventId: number, status: string) => {
-    postInviteAction(hostPlayer, eventId, status).then((events) =>
-      setEvents(events)
-    );
+    postInviteAction(hostPlayer, eventId, status).then((events) => {
+      setEvents(events);
+      getFriendsEvents(hostPlayer).then(setFriendsEvents);
+    });
   };
 
   const validateLogin = (email: string, password: string) => {
@@ -93,18 +97,36 @@ function App() {
 
   const cancelCommitment = (event: Event) => {
     if (event.host_id === hostPlayer) {
-      deleteEvent(event.id, hostPlayer).then((events) =>
-        setEvents(events)
-      );
+      deleteEvent(event.id, hostPlayer).then((events) => {
+        setEvents(events);
+        getFriendsEvents(hostPlayer).then(setFriendsEvents);
+      });
     } else {
-      postInviteAction(hostPlayer, event.id, 'declined').then((events) =>
-        setEvents(events)
-      );
+      postInviteAction(hostPlayer, event.id, 'declined').then((events) => {
+        setEvents(events);
+        getFriendsEvents(hostPlayer).then(setFriendsEvents);
+      });
     }
+  };
+
+  const joinTeeTime = (eventId: number) => {
+    joinEvent(hostPlayer, eventId).then((events) => {
+      setEvents(events);
+      setFriendsEvents((prev) => prev.filter((e) => e.id !== eventId));
+    });
   };
 
   const refreshEvents = () => {
     getAllEvents(hostPlayer).then((events) => setEvents(events));
+    getFriendsEvents(hostPlayer).then(setFriendsEvents);
+  };
+
+  const logout = () => {
+    localStorage.removeItem('jwt_token');
+    setHostPlayer(0);
+    setEvents([]);
+    setFriends([]);
+    setFriendsEvents([]);
   };
 
   const handleResize = () => setScreenWidth(window.innerWidth);
@@ -130,6 +152,7 @@ function App() {
       getAllEvents(hostPlayer).then((events) => {
         setEvents(events);
       });
+      getFriendsEvents(hostPlayer).then(setFriendsEvents);
     }
   }, [allPlayers, hostPlayer]);
 
@@ -139,7 +162,7 @@ function App() {
 
   return (
     <Router>
-      <Header screenWidth={screenWidth} />
+      <Header screenWidth={screenWidth} isLoggedIn={!!hostPlayer} onLogout={logout} />
       <Routes>
         <Route
           path='/login'
@@ -162,25 +185,33 @@ function App() {
         <Route
           path='/dashboard'
           element={
-            <Dashboard
-              events={events}
-              currentUserId={hostPlayer}
-              currentUserName={allPlayers.find((p) => p.id === hostPlayer)?.name || ''}
-              screenWidth={screenWidth}
-              handleInviteAction={{
-                update: updateInvite,
-                cancel: cancelCommitment,
-              }}
-              players={allPlayers}
-              friends={friends}
-              handleFriends={{ add: addFriend, remove: removeFriend }}
-            />
+            !hostPlayer ? (
+              <Navigate to='/login' replace />
+            ) : (
+              <Dashboard
+                events={events}
+                friendsEvents={friendsEvents}
+                currentUserId={hostPlayer}
+                currentUserName={allPlayers.find((p) => p.id === hostPlayer)?.name || ''}
+                screenWidth={screenWidth}
+                handleInviteAction={{
+                  update: updateInvite,
+                  cancel: cancelCommitment,
+                  join: joinTeeTime,
+                }}
+                players={allPlayers}
+                friends={friends}
+                handleFriends={{ add: addFriend, remove: removeFriend }}
+              />
+            )
           }
         />
         <Route
           path='/community'
           element={
-            screenWidth > 480 ? (
+            !hostPlayer ? (
+              <Navigate to='/login' replace />
+            ) : screenWidth > 480 ? (
               <Navigate to='/dashboard' />
             ) : (
               <PlayerList
@@ -196,12 +227,16 @@ function App() {
         <Route
           path='/event-form'
           element={
-            <EventForm
-              courses={courses}
-              friends={friends}
-              hostId={hostPlayer}
-              refreshEvents={refreshEvents}
-            />
+            !hostPlayer ? (
+              <Navigate to='/login' replace />
+            ) : (
+              <EventForm
+                courses={courses}
+                friends={friends}
+                hostId={hostPlayer}
+                refreshEvents={refreshEvents}
+              />
+            )
           }
         />
         <Route path='*' element={<Navigate to='/login' />} />

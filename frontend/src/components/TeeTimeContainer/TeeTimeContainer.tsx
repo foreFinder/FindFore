@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Paper, Title, Stack, Badge, Group } from '@mantine/core';
-import { FiCalendar, FiMail } from 'react-icons/fi';
+import { FiCalendar, FiMail, FiUsers } from 'react-icons/fi';
 
 import TeeTime from '../TeeTime/TeeTime';
 import EmptyState from '../EmptyState/EmptyState';
@@ -10,12 +10,16 @@ import type { Event, HandleInviteAction } from '../../types';
 interface TeeTimeContainerProps {
   title: string;
   events: Event[];
+  friendsEvents?: Event[];
+  friendIds?: number[];
   handleInviteAction: HandleInviteAction;
 }
 
 const TeeTimeContainer = ({
   title,
   events,
+  friendsEvents = [],
+  friendIds = [],
   handleInviteAction,
 }: TeeTimeContainerProps) => {
   const [publicInvites, setPublicInvites] = useState<Event[]>([]);
@@ -36,7 +40,7 @@ const TeeTimeContainer = ({
 
   const isAvailable = title === 'Available Tee Times';
   const displayCount = isAvailable
-    ? (invitesToDisplay === 'private' ? privateInvites.length : publicInvites.length)
+    ? (invitesToDisplay === 'private' ? privateInvites.length : invitesToDisplay === 'public' ? publicInvites.length : friendsEvents.length)
     : committedTeeTimes.length;
 
   const getTeeTimes = (eventsType: Event[]) => {
@@ -55,11 +59,11 @@ const TeeTimeContainer = ({
   useEffect(() => {
     if (getEventType.current() === 'available') {
       setPublicInvites(events.filter((event) => !event.private));
-      setPrivateInvites(events.filter((event) => event.private));
+      setPrivateInvites(events.filter((event) => friendIds.includes(event.host_id)));
     } else {
       setCommittedTeeTimes(events);
     }
-  }, [events]);
+  }, [events, friendIds]);
 
   return (
     <Paper
@@ -99,9 +103,16 @@ const TeeTimeContainer = ({
 
       <Stack gap='xs' p='md' style={{ overflowY: 'auto', flex: 1 }}>
         {title === 'Committed Tee Times' && getTeeTimes(committedTeeTimes)}
-        {invitesToDisplay === 'private'
-          ? getTeeTimes(privateInvites)
-          : getTeeTimes(publicInvites)}
+        {invitesToDisplay === 'private' && getTeeTimes(privateInvites)}
+        {invitesToDisplay === 'public' && getTeeTimes(publicInvites)}
+        {invitesToDisplay === 'join' && friendsEvents.map((event) => (
+          <TeeTime
+            key={event.id}
+            type='joinable'
+            event={event}
+            handleInviteAction={handleInviteAction}
+          />
+        ))}
         {invitesToDisplay === '' && !events.length && (
           <EmptyState
             icon={<FiCalendar size={20} />}
@@ -123,6 +134,13 @@ const TeeTimeContainer = ({
             title='No community invitations'
             description='No tee time invitations from the community yet.'
             actionLabel='Create One'
+          />
+        )}
+        {invitesToDisplay === 'join' && !friendsEvents.length && (
+          <EmptyState
+            icon={<FiUsers size={20} />}
+            title='No open rounds'
+            description="Your friends don't have any tee times with open spots right now."
           />
         )}
       </Stack>

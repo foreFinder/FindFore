@@ -7,6 +7,7 @@ import type { Event, Friend, Player, HandleFriends, HandleInviteAction } from '.
 
 interface DashboardProps {
   events: Event[];
+  friendsEvents: Event[];
   currentUserId: number;
   currentUserName: string;
   screenWidth: number;
@@ -18,6 +19,7 @@ interface DashboardProps {
 
 const Dashboard = ({
   events,
+  friendsEvents,
   currentUserId,
   currentUserName,
   screenWidth,
@@ -137,13 +139,13 @@ const Dashboard = ({
             <TeeTimeContainer
               title='Committed Tee Times'
               events={committedTeeTimes}
-
               handleInviteAction={handleInviteAction}
             />
             <TeeTimeContainer
               title='Available Tee Times'
               events={availableTeeTimes}
-
+              friendsEvents={friendsEvents}
+              friendIds={friends.map((f) => f.id)}
               handleInviteAction={handleInviteAction}
             />
           </SimpleGrid>
@@ -160,6 +162,8 @@ const Dashboard = ({
           <TeeTimeContainer
             title='Available Tee Times'
             events={availableTeeTimes}
+            friendsEvents={friendsEvents}
+            friendIds={friends.map((f) => f.id)}
             handleInviteAction={handleInviteAction}
           />
         )}

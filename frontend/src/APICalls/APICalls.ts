@@ -6,6 +6,7 @@ const endpoints = {
   players: `${API_BASE}/api/v1/players`,
   courses: `${API_BASE}/api/v1/courses`,
   playerEvent: `${API_BASE}/api/v1/player-event`,
+  joinEvent: `${API_BASE}/api/v1/player-event/join`,
   singleEvent: `${API_BASE}/api/v1/event`,
   friendship: `${API_BASE}/api/v1/friendship`,
   sessions: `${API_BASE}/api/v1/sessions`,
@@ -96,6 +97,30 @@ export const postInviteAction = (playerId: number, eventId: number, inviteStatus
       player_id: playerId,
       event_id: eventId,
       invite_status: inviteStatus
+    }),
+    headers: authHeaders()
+  })
+  .then(() => getAllEvents(playerId));
+};
+
+export const getFriendsEvents = (playerId: number): Promise<Event[]> => {
+  return fetch(`${endpoints.players}/${playerId}/friends-events`, {
+    headers: authHeaders()
+  })
+    .then(resp => {
+      if (!resp.ok) {
+        throw new Error("Can't fetch friends events, please try again!");
+      }
+      return resp.json();
+    });
+};
+
+export const joinEvent = (playerId: number, eventId: number): Promise<Event[]> => {
+  return fetch(endpoints.joinEvent, {
+    method: 'POST',
+    body: JSON.stringify({
+      player_id: playerId,
+      event_id: eventId,
     }),
     headers: authHeaders()
   })

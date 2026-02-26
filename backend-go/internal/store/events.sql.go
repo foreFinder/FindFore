@@ -224,6 +224,51 @@ func (q *Queries) ListEventsByPlayerID(ctx context.Context, playerID sql.NullInt
 	return items, nil
 }
 
+const listFriendsAvailableEventIDs = `-- name: ListFriendsAvailableEventIDs :many
+SELECT DISTINCT e.id
+FROM events e
+JOIN player_events pe ON pe.event_id = e.id AND pe.invite_status = 1
+WHERE pe.player_id IN (
+  SELECT followee_id FROM friendships WHERE follower_id = $1
+)
+AND NOT EXISTS (
+  SELECT 1 FROM player_events pe2
+  WHERE pe2.event_id = e.id AND pe2.player_id = $2
+)
+AND e.open_spots > (
+  SELECT COUNT(*) FROM player_events pe3
+  WHERE pe3.event_id = e.id AND pe3.invite_status = 1
+)
+`
+
+type ListFriendsAvailableEventIDsParams struct {
+	FollowerID sql.NullInt32
+	PlayerID   sql.NullInt64
+}
+
+func (q *Queries) ListFriendsAvailableEventIDs(ctx context.Context, arg ListFriendsAvailableEventIDsParams) ([]int64, error) {
+	rows, err := q.db.QueryContext(ctx, listFriendsAvailableEventIDs, arg.FollowerID, arg.PlayerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listPublicEvents = `-- name: ListPublicEvents :many
 SELECT e.id, e.course_id, e.date, e.tee_time, e.open_spots, e.number_of_holes,
        e.private, e.host_id, c.name AS course_name, p.name AS host_name

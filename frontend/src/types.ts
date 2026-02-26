@@ -60,4 +60,5 @@ export interface HandleFriends {
 export interface HandleInviteAction {
   update: (eventId: number, status: string) => void;
   cancel: (event: Event) => void;
+  join: (eventId: number) => void;
 }

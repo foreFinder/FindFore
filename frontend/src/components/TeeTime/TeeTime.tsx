@@ -96,6 +96,17 @@ const TeeTime = ({ type, event, handleInviteAction }: TeeTimeProps) => {
             </Button>
           </>
         )}
+        {type === 'joinable' && (
+          <Button
+            className='join'
+            color='forest'
+            variant='filled'
+            size='sm'
+            onClick={() => handleInviteAction.join(event.id)}
+          >
+            Join
+          </Button>
+        )}
       </Group>
     </Card>
   );

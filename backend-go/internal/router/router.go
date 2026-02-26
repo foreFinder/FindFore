@@ -23,6 +23,7 @@ func New(h *handler.Handler, jwtSecret string) *chi.Mux {
 		r.Get("/players", h.ListPlayers)
 		r.Post("/players", h.CreatePlayer)
 		r.Get("/players/{player_id}/events", h.ListEvents)
+		r.Get("/players/{player_id}/friends-events", h.ListFriendsEvents)
 
 		r.Get("/events", h.ListEvents)
 		r.Get("/event/{id}", h.GetEvent)
@@ -33,6 +34,7 @@ func New(h *handler.Handler, jwtSecret string) *chi.Mux {
 		r.Delete("/friendship", h.DeleteFriendship)
 
 		r.Patch("/player-event", h.UpdatePlayerEvent)
+		r.Post("/player-event/join", h.JoinEvent)
 
 		r.Post("/sessions", h.CreateSession)
 	})

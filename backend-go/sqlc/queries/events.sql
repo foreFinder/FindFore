@@ -40,3 +40,19 @@ RETURNING id, course_id, date, tee_time, open_spots, number_of_holes, private, h
 
 -- name: DeleteEvent :exec
 DELETE FROM events WHERE id = $1;
+
+-- name: ListFriendsAvailableEventIDs :many
+SELECT DISTINCT e.id
+FROM events e
+JOIN player_events pe ON pe.event_id = e.id AND pe.invite_status = 1
+WHERE pe.player_id IN (
+  SELECT followee_id FROM friendships WHERE follower_id = $1
+)
+AND NOT EXISTS (
+  SELECT 1 FROM player_events pe2
+  WHERE pe2.event_id = e.id AND pe2.player_id = $2
+)
+AND e.open_spots > (
+  SELECT COUNT(*) FROM player_events pe3
+  WHERE pe3.event_id = e.id AND pe3.invite_status = 1
+);

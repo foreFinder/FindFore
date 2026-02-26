@@ -272,6 +272,36 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusCreated, resp)
 }
 
+func (h *Handler) ListFriendsEvents(w http.ResponseWriter, r *http.Request) {
+	playerIDStr := chi.URLParam(r, "player_id")
+	pid, err := strconv.ParseInt(playerIDStr, 10, 64)
+	if err != nil {
+		respondError(w, http.StatusBadRequest, "bad_request", "Invalid player_id")
+		return
+	}
+
+	eventIDs, err := h.queries.ListFriendsAvailableEventIDs(r.Context(), store.ListFriendsAvailableEventIDsParams{
+		FollowerID: sql.NullInt32{Int32: int32(pid), Valid: true},
+		PlayerID:   sql.NullInt64{Int64: pid, Valid: true},
+	})
+	if err != nil {
+		respondError(w, http.StatusInternalServerError, "internal_error", "Failed to fetch friends events")
+		return
+	}
+
+	resp := make([]model.EventResponse, 0, len(eventIDs))
+	for _, eid := range eventIDs {
+		er, err := h.buildEventResponse(r, eid)
+		if err != nil {
+			respondError(w, http.StatusInternalServerError, "internal_error", "Failed to build event response")
+			return
+		}
+		resp = append(resp, *er)
+	}
+
+	respondJSON(w, http.StatusOK, resp)
+}
+
 func (h *Handler) DeleteEvent(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.ParseInt(idStr, 10, 64)

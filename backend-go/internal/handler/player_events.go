@@ -84,6 +84,74 @@ func (h *Handler) UpdatePlayerEvent(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, resp)
 }
 
+type joinEventRequest struct {
+	PlayerID int64 `json:"player_id"`
+	EventID  int64 `json:"event_id"`
+}
+
+func (h *Handler) JoinEvent(w http.ResponseWriter, r *http.Request) {
+	var req joinEventRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respondError(w, http.StatusBadRequest, "bad_request", "Invalid request body")
+		return
+	}
+
+	// Check that the player isn't already part of this event
+	_, err := h.queries.GetPlayerEvent(r.Context(), store.GetPlayerEventParams{
+		PlayerID: sql.NullInt64{Int64: req.PlayerID, Valid: true},
+		EventID:  sql.NullInt64{Int64: req.EventID, Valid: true},
+	})
+	if err == nil {
+		respondError(w, http.StatusConflict, "conflict", "Player is already part of this event")
+		return
+	}
+
+	// Check remaining spots
+	event, err := h.queries.GetEventByID(r.Context(), req.EventID)
+	if err != nil {
+		respondError(w, http.StatusNotFound, "not_found", "Event not found")
+		return
+	}
+
+	acceptedCount, err := h.queries.CountAcceptedForEvent(r.Context(), sql.NullInt64{Int64: req.EventID, Valid: true})
+	if err != nil {
+		respondError(w, http.StatusInternalServerError, "internal_error", "Failed to check event capacity")
+		return
+	}
+
+	remaining := event.OpenSpots.Int32 - int32(acceptedCount)
+	if remaining <= 0 {
+		respondError(w, http.StatusConflict, "conflict", "Event is full")
+		return
+	}
+
+	// Create player_event with accepted status
+	pe, err := h.queries.CreatePlayerEvent(r.Context(), store.CreatePlayerEventParams{
+		PlayerID:     sql.NullInt64{Int64: req.PlayerID, Valid: true},
+		EventID:      sql.NullInt64{Int64: req.EventID, Valid: true},
+		InviteStatus: sql.NullInt32{Int32: statusAccepted, Valid: true},
+	})
+	if err != nil {
+		respondError(w, http.StatusInternalServerError, "internal_error", "Failed to join event")
+		return
+	}
+
+	// Cascade logic: close pending if event is now full
+	if err := h.closeOrOpenInvitations(r, req.EventID); err != nil {
+		respondError(w, http.StatusInternalServerError, "internal_error", "Failed to update invitation statuses")
+		return
+	}
+
+	resp := model.PlayerEventResponse{
+		ID:           pe.ID,
+		PlayerID:     pe.PlayerID.Int64,
+		EventID:      pe.EventID.Int64,
+		InviteStatus: inviteStatusToString(pe.InviteStatus.Int32),
+	}
+
+	respondJSON(w, http.StatusCreated, resp)
+}
+
 func (h *Handler) closeOrOpenInvitations(r *http.Request, eventID int64) error {
 	event, err := h.queries.GetEventByID(r.Context(), eventID)
 	if err != nil {

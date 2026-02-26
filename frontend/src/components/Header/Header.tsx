@@ -1,15 +1,25 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Burger, Anchor, Group, Drawer, Stack, UnstyledButton } from '@mantine/core';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Burger, Anchor, Group, Drawer, Stack, UnstyledButton, Button } from '@mantine/core';
 import { GiGolfTee } from 'react-icons/gi';
+import { FiLogOut } from 'react-icons/fi';
 
 interface HeaderProps {
   screenWidth: number;
+  isLoggedIn: boolean;
+  onLogout: () => void;
 }
 
-const Header = ({ screenWidth }: HeaderProps) => {
+const Header = ({ screenWidth, isLoggedIn, onLogout }: HeaderProps) => {
   const [mobileNav, setMobileNav] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    onLogout();
+    setMobileNav(false);
+    navigate('/login');
+  };
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -112,6 +122,24 @@ const Header = ({ screenWidth }: HeaderProps) => {
             >
               Create Tee Time
             </Anchor>
+            {isLoggedIn && (
+              <Button
+                variant='subtle'
+                color='sand'
+                size='sm'
+                leftSection={<FiLogOut size={16} />}
+                onClick={handleLogout}
+                data-cy='logout-btn'
+                styles={{
+                  root: {
+                    color: '#c4a876',
+                    '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' },
+                  },
+                }}
+              >
+                Log Out
+              </Button>
+            )}
           </Group>
         ) : (
           <Drawer
@@ -159,6 +187,25 @@ const Header = ({ screenWidth }: HeaderProps) => {
                   style={mobileLinkStyle}
                 >
                   My Community
+                </UnstyledButton>
+              )}
+              {isLoggedIn && (
+                <UnstyledButton
+                  data-cy='logout-btn'
+                  onClick={handleLogout}
+                  style={{
+                    ...mobileLinkStyle,
+                    color: '#c4a876',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    marginTop: '1rem',
+                    borderTop: '1px solid rgba(255,255,255,0.1)',
+                    paddingTop: '1.5rem',
+                  }}
+                >
+                  <FiLogOut size={18} />
+                  Log Out
                 </UnstyledButton>
               )}
             </Stack>
