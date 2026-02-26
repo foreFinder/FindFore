@@ -62,3 +62,29 @@ type PlayerEvent struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
+
+type Post struct {
+	ID        int64
+	PlayerID  int64
+	Body      string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type Reaction struct {
+	ID        int64
+	PostID    int64
+	PlayerID  int64
+	Emoji     string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type Reply struct {
+	ID        int64
+	PostID    int64
+	PlayerID  int64
+	Body      string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}

@@ -3,7 +3,7 @@ import Dashboard from '../Dashboard/Dashboard';
 import PlayerList from '../PlayerList/PlayerList';
 import Login from '../Login/Login';
 import CreateProfile from '../CreateProfile/CreateProfile';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -25,11 +25,39 @@ import {
 } from '../../APICalls/APICalls';
 import type { Event, Friend, Course, Player } from '../../types';
 
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+const ACTIVITY_KEY = 'last_activity';
+
+function getPlayerIdFromToken(): number {
+  try {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) return 0;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    if (payload.exp * 1000 < Date.now()) return 0;
+    return payload.player_id || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function isSessionActive(): boolean {
+  const last = localStorage.getItem(ACTIVITY_KEY);
+  if (!last) return false;
+  return Date.now() - Number(last) < SESSION_TIMEOUT_MS;
+}
+
+function touchActivity() {
+  localStorage.setItem(ACTIVITY_KEY, String(Date.now()));
+}
+
 function App() {
+  const restoredId = getPlayerIdFromToken();
+  const initialPlayer = restoredId && isSessionActive() ? restoredId : 0;
+
   const [events, setEvents] = useState<Event[]>([]);
   const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
-  const [hostPlayer, setHostPlayer] = useState<number>(0);
+  const [hostPlayer, setHostPlayer] = useState<number>(initialPlayer);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [friendsEvents, setFriendsEvents] = useState<Event[]>([]);
@@ -84,6 +112,7 @@ function App() {
         if (data.token) {
           localStorage.setItem('jwt_token', data.token);
         }
+        touchActivity();
         // Friends will be populated from allPlayers once hostPlayer is set
       })
       .catch(() => {
@@ -91,9 +120,35 @@ function App() {
       });
   };
 
+  const logout = useCallback(() => {
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem(ACTIVITY_KEY);
+    setHostPlayer(0);
+    setEvents([]);
+    setFriends([]);
+    setFriendsEvents([]);
+  }, []);
+
+  // Track user activity and enforce 30-min inactivity timeout
   useEffect(() => {
-    // Intentionally empty — previously held dead code
-  }, [hostPlayer, friends, events]);
+    if (!hostPlayer) return;
+
+    const onActivity = () => touchActivity();
+    window.addEventListener('click', onActivity);
+    window.addEventListener('keydown', onActivity);
+
+    const interval = setInterval(() => {
+      if (!isSessionActive()) {
+        logout();
+      }
+    }, 60_000); // check every minute
+
+    return () => {
+      window.removeEventListener('click', onActivity);
+      window.removeEventListener('keydown', onActivity);
+      clearInterval(interval);
+    };
+  }, [hostPlayer, logout]);
 
   const cancelCommitment = (event: Event) => {
     if (event.host_id === hostPlayer) {
@@ -119,14 +174,6 @@ function App() {
   const refreshEvents = () => {
     getAllEvents(hostPlayer).then((events) => setEvents(events));
     getFriendsEvents(hostPlayer).then(setFriendsEvents);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('jwt_token');
-    setHostPlayer(0);
-    setEvents([]);
-    setFriends([]);
-    setFriendsEvents([]);
   };
 
   const handleResize = () => setScreenWidth(window.innerWidth);

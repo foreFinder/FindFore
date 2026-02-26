@@ -1,4 +1,4 @@
-import type { Player, Course, Event, LoginResponse } from '../types';
+import type { Player, Course, Event, LoginResponse, Post, Reaction, Reply } from '../types';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 
@@ -9,6 +9,7 @@ const endpoints = {
   joinEvent: `${API_BASE}/api/v1/player-event/join`,
   singleEvent: `${API_BASE}/api/v1/event`,
   friendship: `${API_BASE}/api/v1/friendship`,
+  posts: `${API_BASE}/api/v1/posts`,
   sessions: `${API_BASE}/api/v1/sessions`,
 };
 
@@ -222,4 +223,74 @@ export const validateStandardLogin = (email: string, password: string): Promise<
       return resp.json();
     }
   });
+};
+
+// --- Newsfeed ---
+
+export const getPosts = (limit = 50, offset = 0): Promise<Post[]> => {
+  return fetch(`${endpoints.posts}?limit=${limit}&offset=${offset}`, {
+    headers: authHeaders()
+  })
+    .then(resp => {
+      if (!resp.ok) throw new Error("Can't fetch posts, please try again!");
+      return resp.json();
+    });
+};
+
+export const createPost = (playerId: number, body: string): Promise<Post> => {
+  return fetch(endpoints.posts, {
+    method: 'POST',
+    body: JSON.stringify({ player_id: playerId, body }),
+    headers: authHeaders()
+  })
+    .then(resp => {
+      if (!resp.ok) throw new Error('Failed to create post');
+      return resp.json();
+    });
+};
+
+export const deletePost = (postId: number, playerId: number): Promise<void> => {
+  return fetch(`${endpoints.posts}/${postId}`, {
+    method: 'DELETE',
+    body: JSON.stringify({ player_id: playerId }),
+    headers: authHeaders()
+  })
+    .then(resp => {
+      if (!resp.ok) throw new Error('Failed to delete post');
+    });
+};
+
+export const toggleReaction = (postId: number, playerId: number, emoji: string): Promise<Reaction[]> => {
+  return fetch(`${endpoints.posts}/${postId}/reactions`, {
+    method: 'POST',
+    body: JSON.stringify({ player_id: playerId, emoji }),
+    headers: authHeaders()
+  })
+    .then(resp => {
+      if (!resp.ok) throw new Error('Failed to toggle reaction');
+      return resp.json();
+    });
+};
+
+export const createReply = (postId: number, playerId: number, body: string): Promise<Reply> => {
+  return fetch(`${endpoints.posts}/${postId}/replies`, {
+    method: 'POST',
+    body: JSON.stringify({ player_id: playerId, body }),
+    headers: authHeaders()
+  })
+    .then(resp => {
+      if (!resp.ok) throw new Error('Failed to create reply');
+      return resp.json();
+    });
+};
+
+export const deleteReply = (postId: number, replyId: number, playerId: number): Promise<void> => {
+  return fetch(`${endpoints.posts}/${postId}/replies/${replyId}`, {
+    method: 'DELETE',
+    body: JSON.stringify({ player_id: playerId }),
+    headers: authHeaders()
+  })
+    .then(resp => {
+      if (!resp.ok) throw new Error('Failed to delete reply');
+    });
 };

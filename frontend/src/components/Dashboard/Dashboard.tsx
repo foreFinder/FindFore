@@ -3,6 +3,7 @@ import { Tabs, SimpleGrid, Paper, Text, Title, Group, Box } from '@mantine/core'
 import { FiCalendar, FiMail, FiUsers } from 'react-icons/fi';
 import PlayerList from '../PlayerList/PlayerList';
 import TeeTimeContainer from '../TeeTimeContainer/TeeTimeContainer';
+import Newsfeed from '../Newsfeed/Newsfeed';
 import type { Event, Friend, Player, HandleFriends, HandleInviteAction } from '../../types';
 
 interface DashboardProps {
@@ -130,25 +131,29 @@ const Dashboard = ({
             <Tabs.List grow>
               <Tabs.Tab value='committed'>Committed</Tabs.Tab>
               <Tabs.Tab value='available'>Available</Tabs.Tab>
+              <Tabs.Tab value='feed'>Feed</Tabs.Tab>
             </Tabs.List>
           </Tabs>
         )}
 
         {screenWidth >= 768 && (
-          <SimpleGrid cols={2} spacing='md'>
-            <TeeTimeContainer
-              title='Committed Tee Times'
-              events={committedTeeTimes}
-              handleInviteAction={handleInviteAction}
-            />
-            <TeeTimeContainer
-              title='Available Tee Times'
-              events={availableTeeTimes}
-              friendsEvents={friendsEvents}
-              friendIds={friends.map((f) => f.id)}
-              handleInviteAction={handleInviteAction}
-            />
-          </SimpleGrid>
+          <>
+            <SimpleGrid cols={2} spacing='md' mb='md'>
+              <TeeTimeContainer
+                title='Committed Tee Times'
+                events={committedTeeTimes}
+                handleInviteAction={handleInviteAction}
+              />
+              <TeeTimeContainer
+                title='Available Tee Times'
+                events={availableTeeTimes}
+                friendsEvents={friendsEvents}
+                friendIds={friends.map((f) => f.id)}
+                handleInviteAction={handleInviteAction}
+              />
+            </SimpleGrid>
+            <Newsfeed currentUserId={currentUserId} currentUserName={currentUserName} />
+          </>
         )}
 
         {activeTab === 'committed' && screenWidth < 768 && (
@@ -166,6 +171,9 @@ const Dashboard = ({
             friendIds={friends.map((f) => f.id)}
             handleInviteAction={handleInviteAction}
           />
+        )}
+        {activeTab === 'feed' && screenWidth < 768 && (
+          <Newsfeed currentUserId={currentUserId} currentUserName={currentUserName} />
         )}
       </Box>
     </div>

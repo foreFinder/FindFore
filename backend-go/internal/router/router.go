@@ -36,6 +36,13 @@ func New(h *handler.Handler, jwtSecret string) *chi.Mux {
 		r.Patch("/player-event", h.UpdatePlayerEvent)
 		r.Post("/player-event/join", h.JoinEvent)
 
+		r.Get("/posts", h.ListPosts)
+		r.Post("/posts", h.CreatePost)
+		r.Delete("/posts/{post_id}", h.DeletePost)
+		r.Post("/posts/{post_id}/reactions", h.ToggleReaction)
+		r.Post("/posts/{post_id}/replies", h.CreateReply)
+		r.Delete("/posts/{post_id}/replies/{reply_id}", h.DeleteReply)
+
 		r.Post("/sessions", h.CreateSession)
 	})
 

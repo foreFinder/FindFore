@@ -64,6 +64,31 @@ type FriendshipResponse struct {
 	Followee   PlayerResponse `json:"followee"`
 }
 
+type PostResponse struct {
+	ID         int64              `json:"id"`
+	PlayerID   int64              `json:"player_id"`
+	PlayerName string             `json:"player_name"`
+	Body       string             `json:"body"`
+	CreatedAt  string             `json:"created_at"`
+	Reactions  []ReactionResponse `json:"reactions"`
+	Replies    []ReplyResponse    `json:"replies"`
+}
+
+type ReactionResponse struct {
+	ID         int64  `json:"id"`
+	PlayerID   int64  `json:"player_id"`
+	PlayerName string `json:"player_name"`
+	Emoji      string `json:"emoji"`
+}
+
+type ReplyResponse struct {
+	ID         int64  `json:"id"`
+	PlayerID   int64  `json:"player_id"`
+	PlayerName string `json:"player_name"`
+	Body       string `json:"body"`
+	CreatedAt  string `json:"created_at"`
+}
+
 type ErrorDetail struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
